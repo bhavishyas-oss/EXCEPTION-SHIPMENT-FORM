@@ -1307,7 +1307,7 @@ canvas { display: none; }
 //  CONFIG — paste your deployed GAS URL here
 //  (Only ONE script needed — data recording)
 // ════════════════════════════════════════════════
-const GAS_DATA_URL = 'https://script.google.com/macros/s/AKfycbzF0YX-cy_iPvqtNRD-8fkrrE3w20yd-kzNj2qf4jXLYLsg4B9tvtzNwJDP9KHmds_oKA/exec';
+const GAS_DATA_URL = 'YOUR_DATA_GAS_DEPLOYED_URL';
 
 // ════════════════════════════════════════════════
 //  SESSION  (persists GC ID + Area across submissions)
@@ -1672,16 +1672,7 @@ function doLogout() {
   document.getElementById('capConfirm').classList.remove('vis');
   updateProgress();
   // Back to title page
-  var tp = document.getElementById('titlePage');
-  var dp = document.getElementById('dashPage');
-  var dv = document.getElementById('dataViewPage');
-  dp.style.display = 'none';
-  dv.style.display = 'none';
-  tp.style.display = 'flex';
-  tp.style.flexDirection = 'column';
-  tp.style.alignItems = 'center';
-  tp.style.justifyContent = 'center';
-  tp.style.height = '100vh';
+  _nav('titlePage');
 }
 
 // ════════════════════════════════════════════════
@@ -1698,66 +1689,37 @@ document.querySelectorAll('.modal-backdrop').forEach(el => {
 });
 
 // ════════════════════════════════════════════════
-//  PAGE NAVIGATION HELPERS
+//  PAGE NAVIGATION — single source of truth
 // ════════════════════════════════════════════════
+function _nav(show) {
+  var pages = ['titlePage', 'dashPage', 'dataViewPage'];
+  pages.forEach(function(id) {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById(show).style.display = 'flex';
+}
 
-// Self-contained button handlers — zero dependencies, cannot fail silently
 function goToRecord() {
-  var tp = document.getElementById('titlePage');
-  var dp = document.getElementById('dashPage');
-  var dv = document.getElementById('dataViewPage');
-  tp.style.display = 'none';
-  dv.style.display = 'none';
-  dp.style.removeProperty('display');
-  dp.style.display = 'flex';
-  dp.style.flexDirection = 'column';
-  dp.style.height = '100vh';
-  dp.style.overflow = 'hidden';
+  _nav('dashPage');
   loadSession();
-  if (session.gcId) lockGcId(session.gcId);
-  if (session.area) document.getElementById('fArea').value = session.area;
+  if (session.gcId) { lockGcId(session.gcId); }
+  if (session.area) { document.getElementById('fArea').value = session.area; }
   updateProgress();
 }
 
 function goToView() {
-  var tp = document.getElementById('titlePage');
-  var dp = document.getElementById('dashPage');
-  var dv = document.getElementById('dataViewPage');
-  tp.style.display = 'none';
-  dp.style.display = 'none';
-  dv.style.removeProperty('display');
-  dv.style.display = 'flex';
-  dv.style.flexDirection = 'column';
-  dv.style.height = '100vh';
-  dv.style.overflow = 'hidden';
+  _nav('dataViewPage');
   switchDvTab('daily');
   loadDailyCount();
 }
 
-function showPage(id) {
-  document.getElementById('titlePage').style.cssText    = 'display:none !important';
-  document.getElementById('dashPage').style.cssText     = 'display:none !important';
-  document.getElementById('dataViewPage').style.cssText = 'display:none !important';
-  var t = document.getElementById(id);
-  if (id === 'titlePage') {
-    t.style.cssText = 'display:flex !important; flex-direction:column; align-items:center; justify-content:center; height:100vh;';
-  } else {
-    t.style.cssText = 'display:flex !important; flex-direction:column; height:100vh; overflow:hidden;';
-  }
-}
-
 function goToTitle() {
   stopCamera();
-  var tp = document.getElementById('titlePage');
-  var dp = document.getElementById('dashPage');
-  var dv = document.getElementById('dataViewPage');
-  dp.style.display = 'none';
-  dv.style.display = 'none';
-  tp.style.display = 'flex';
-  tp.style.flexDirection = 'column';
-  tp.style.alignItems = 'center';
-  tp.style.justifyContent = 'center';
-  tp.style.height = '100vh';
+  _nav('titlePage');
+}
+
+function showPage(id) {
+  _nav(id);
 }
 
 // ════════════════════════════════════════════════
