@@ -1307,7 +1307,7 @@ canvas { display: none; }
 //  CONFIG — paste your deployed GAS URL here
 //  (Only ONE script needed — data recording)
 // ════════════════════════════════════════════════
-const GAS_DATA_URL = 'YOUR_DATA_GAS_DEPLOYED_URL';
+const GAS_DATA_URL = 'https://script.google.com/macros/s/AKfycbzF0YX-cy_iPvqtNRD-8fkrrE3w20yd-kzNj2qf4jXLYLsg4B9tvtzNwJDP9KHmds_oKA/exec';
 
 // ════════════════════════════════════════════════
 //  SESSION  (persists GC ID + Area across submissions)
@@ -1890,7 +1890,7 @@ function renderDetailTable() {
     const idx    = start + i + 1;
     const imgUrl = r.imageUrl || '';
     const imgCell = imgUrl
-      ? '<img class="img-thumb" src="' + driveThumb(imgUrl) + '" alt="img" onclick="openImgModal('' + escHtml(imgUrl) + '')" loading="lazy"/>'
+      ? '<img class="img-thumb" src="' + driveThumb(imgUrl) + '" alt="img" data-url="' + imgUrl.replace(/"/g,"&quot;") + '" loading="lazy" style="cursor:pointer"/>'
       : '<span style="color:var(--muted);font-size:10px;">No image</span>';
 
     const typeShort = (r.shipType || '—').replace(' SHIPMENT','').replace(' Shipment','');
@@ -1909,6 +1909,13 @@ function renderDetailTable() {
   html += '</tbody></table>';
   wrap.innerHTML = html;
   updatePagination(dvDetailData.length);
+
+  // Delegated click — avoids all inline onclick quote-nesting issues
+  wrap.querySelectorAll('.img-thumb').forEach(function(img) {
+    img.addEventListener('click', function() {
+      openImgModal(this.getAttribute('data-url'));
+    });
+  });
 }
 
 function driveThumb(url) {
