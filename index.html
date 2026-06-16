@@ -86,23 +86,402 @@ html, body {
   padding: 0 16px;
 }
 
-.btn-go {
-  background: var(--accent);
-  color: var(--bg-dark);
+.title-btns {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-title-nav {
   font-family: var(--fdisp);
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   border: none;
   border-radius: 10px;
-  padding: 14px 56px;
+  padding: 16px 48px;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  min-width: 200px;
+}
+.btn-title-nav:active { transform: scale(0.97); }
+
+.btn-data-record {
+  background: var(--accent);
+  color: var(--bg-dark);
   box-shadow: 0 4px 18px rgba(233,223,67,0.35);
 }
-.btn-go:hover  { background: var(--accent-h); box-shadow: 0 6px 24px rgba(233,223,67,0.5); }
-.btn-go:active { transform: scale(0.97); }
+.btn-data-record:hover { background: var(--accent-h); box-shadow: 0 6px 24px rgba(233,223,67,0.5); }
+
+.btn-data-view {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(26,148,120,0.35);
+}
+.btn-data-view:hover { background: var(--green-h); box-shadow: 0 6px 24px rgba(34,176,144,0.5); }
+
+/* ════════════════════════════════════════════
+   DATA VIEW PAGE
+════════════════════════════════════════════ */
+#dataViewPage {
+  height: 100vh;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* dv = data view prefix */
+.dv-hdr-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-back {
+  background: var(--accent);
+  color: var(--bg-dark);
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.btn-back:hover { background: var(--accent-h); }
+.btn-back svg { width: 13px; height: 13px; }
+
+.btn-rec-nav {
+  background: var(--green);
+  color: #fff;
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.btn-rec-nav:hover { background: var(--green-h); }
+
+/* Tabs */
+.dv-tabs {
+  display: flex;
+  gap: 0;
+  padding: 10px 14px 0;
+  flex-shrink: 0;
+}
+.dv-tab {
+  font-family: var(--fdisp);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  color: var(--muted);
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 7px 7px 0 0;
+  transition: all 0.15s;
+  margin-right: 4px;
+}
+.dv-tab.active {
+  background: var(--bg-card);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Tab content panels */
+.dv-content {
+  flex: 1;
+  min-height: 0;
+  padding: 0 14px 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dv-tab-panel {
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0 10px 10px 10px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.dv-tab-panel.active { display: flex; }
+
+/* Table wrapper — scrollable */
+.dv-table-wrap {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+/* Shared table styles */
+.dv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.dv-table thead tr {
+  position: sticky;
+  top: 0;
+  background: var(--accent);
+  z-index: 2;
+}
+.dv-table thead th {
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bg-dark);
+  padding: 9px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+.dv-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.dv-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+.dv-table tbody td {
+  padding: 8px 12px;
+  color: var(--text);
+  vertical-align: middle;
+}
+.dv-table tbody td.num {
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+}
+.dv-table tbody td.muted { color: var(--muted); font-size: 11px; }
+
+/* Filters bar */
+.dv-filters {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.dv-filters select {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 7px 28px 7px 10px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23e9df43' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+.dv-filters select:focus { border-color: var(--accent); }
+.dv-filters select option { background: var(--bg-dark); }
+
+.btn-filter-apply {
+  background: var(--accent);
+  color: var(--bg-dark);
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-filter-apply:hover { background: var(--accent-h); }
+
+.btn-refresh {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+.btn-refresh svg { width: 12px; height: 12px; }
+
+/* Pagination */
+.dv-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+}
+.dv-page-btns { display: flex; gap: 6px; }
+.btn-page {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 5px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-page:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn-page:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Thumbnail */
+.img-thumb {
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s, transform 0.15s;
+  display: block;
+}
+.img-thumb:hover { border-color: var(--accent); transform: scale(1.08); }
+
+/* Image viewer modal */
+#imgModal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  flex-direction: column;
+  gap: 10px;
+}
+#imgModal.open { opacity: 1; pointer-events: all; }
+
+.img-modal-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.btn-img-ctrl {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.btn-img-ctrl:hover { background: rgba(255,255,255,0.22); }
+.btn-img-ctrl svg { width: 13px; height: 13px; }
+.btn-img-close {
+  background: var(--red);
+  border-color: var(--red);
+}
+.btn-img-close:hover { background: var(--red-h); }
+
+.img-modal-frame {
+  flex: 1;
+  min-height: 0;
+  max-width: 92vw;
+  max-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  position: relative;
+}
+.img-modal-frame:active { cursor: grabbing; }
+#imgModalImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+  transition: transform 0.15s;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Loading state */
+.dv-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+  gap: 10px;
+  letter-spacing: 0.05em;
+}
+.dv-loading .spinner { border-color: rgba(168,213,200,0.3); border-top-color: var(--muted); }
+
+.dv-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
 
 /* ═══════════════════════════════════════════
    DASHBOARD PAGE — fixed full-viewport layout
@@ -600,7 +979,14 @@ canvas { display: none; }
     </svg>
   </div>
   <div class="title-name">Operations DEO<br>Shipment Recorder</div>
-  <button class="btn-go" onclick="startDash()">GO!</button>
+  <div class="title-btns">
+    <button class="btn-title-nav btn-data-record" onclick="startDash()">
+      &#x1F4DD; Data Record
+    </button>
+    <button class="btn-title-nav btn-data-view" onclick="startDataView()">
+      &#x1F4CA; Data View
+    </button>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════════
@@ -758,6 +1144,126 @@ canvas { display: none; }
 </div><!-- /dashPage -->
 
 <!-- ════════════════════════════════════════
+     DATA VIEW PAGE
+════════════════════════════════════════ -->
+<div id="dataViewPage">
+
+  <!-- Header -->
+  <header class="hdr">
+    <div class="logo-badge">
+      <svg viewBox="0 0 180 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="16,6 30,27 16,48 6,37 12,27 6,17" fill="#e9df43"/>
+        <polygon points="30,6 44,27 30,48 20,37 26,27 20,17" fill="#1C856F"/>
+        <text x="50" y="35" font-family="Barlow Condensed,Arial" font-weight="800" font-size="26" fill="#1C856F">SHADOWFAX</text>
+        <text x="50" y="48" font-family="Barlow,Arial" font-size="10" fill="#888">Think ahead!</text>
+      </svg>
+    </div>
+    <div class="hdr-title">Operations DEO Shipment Recorder — Data View</div>
+    <div class="dv-hdr-actions">
+      <button class="btn-rec-nav" onclick="startDash()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Data Record
+      </button>
+      <button class="btn-back" onclick="goToTitle()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="dv-tabs">
+    <button class="dv-tab active" id="tabDailyBtn" onclick="switchDvTab('daily')">
+      &#x1F4C5; Daily Count
+    </button>
+    <button class="dv-tab" id="tabDetailBtn" onclick="switchDvTab('detail')">
+      &#x1F50D; Detailed View
+    </button>
+  </div>
+
+  <!-- Tab content -->
+  <div class="dv-content">
+
+    <!-- ── DAILY COUNT TAB ── -->
+    <div class="dv-tab-panel active" id="tabDaily">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px;flex-shrink:0;">
+        <span style="font-size:11px;color:var(--muted);letter-spacing:0.08em;">Shipment counts grouped by Date × Area — sorted latest first</span>
+        <button class="btn-refresh" onclick="loadDailyCount()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div class="dv-table-wrap" id="dailyTableWrap">
+        <div class="dv-loading" id="dailyLoading">
+          <span class="spinner"></span> Loading data…
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DETAILED VIEW TAB ── -->
+    <div class="dv-tab-panel" id="tabDetail">
+      <!-- Filters -->
+      <div class="dv-filters">
+        <select id="dvFilterDate">
+          <option value="">All Dates</option>
+        </select>
+        <select id="dvFilterType">
+          <option value="">All Shipment Types</option>
+          <option value="DAMAGED SHIPMENT">Damaged Shipment</option>
+          <option value="EMPTY SHIPMENT">Empty Shipment</option>
+          <option value="ORPHAN SHIPMENT">Orphan Shipment</option>
+        </select>
+        <select id="dvFilterArea">
+          <option value="">All Areas</option>
+        </select>
+        <button class="btn-filter-apply" onclick="applyDetailFilter()">Apply Filter</button>
+        <button class="btn-refresh" onclick="initDetailView()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Refresh
+        </button>
+      </div>
+      <!-- Table -->
+      <div class="dv-table-wrap" id="detailTableWrap">
+        <div class="dv-loading" id="detailLoading">
+          <span class="spinner"></span> Loading data…
+        </div>
+      </div>
+      <!-- Pagination -->
+      <div class="dv-pagination" id="detailPagination">
+        <span id="pageInfo">—</span>
+        <div class="dv-page-btns">
+          <button class="btn-page" id="btnPrevPage" onclick="changePage(-1)" disabled>&#8592; Prev</button>
+          <button class="btn-page" id="btnNextPage" onclick="changePage(1)"  disabled>Next &#8594;</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dv-content -->
+</div><!-- /dataViewPage -->
+
+<!-- Image viewer modal -->
+<div id="imgModal">
+  <div class="img-modal-toolbar">
+    <button class="btn-img-ctrl" onclick="imgZoom(1.25)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      Zoom In
+    </button>
+    <button class="btn-img-ctrl" onclick="imgZoom(0.8)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      Zoom Out
+    </button>
+    <button class="btn-img-ctrl" onclick="imgResetZoom()">Reset</button>
+    <button class="btn-img-ctrl btn-img-close" onclick="closeImgModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Close
+    </button>
+  </div>
+  <div class="img-modal-frame" id="imgModalFrame">
+    <img id="imgModalImg" src="" alt="Shipment image"/>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
      MODALS
 ════════════════════════════════════════ -->
 <!-- Logout confirm -->
@@ -801,7 +1307,7 @@ canvas { display: none; }
 //  CONFIG — paste your deployed GAS URL here
 //  (Only ONE script needed — data recording)
 // ════════════════════════════════════════════════
-const GAS_DATA_URL = 'https://script.google.com/macros/s/AKfycbyyM9ImEQTnZVnQxnQDaGD0FGlC124pQPlRRIv6ouAm0rZRE27CGERF8RSVWd33Xj1AvQ/exec';
+const GAS_DATA_URL = 'https://script.google.com/macros/s/AKfycbzF0YX-cy_iPvqtNRD-8fkrrE3w20yd-kzNj2qf4jXLYLsg4B9tvtzNwJDP9KHmds_oKA/exec';
 
 // ════════════════════════════════════════════════
 //  SESSION  (persists GC ID + Area across submissions)
@@ -815,8 +1321,7 @@ function clearSession() { session = { gcId: null, area: null }; sessionStorage.r
 //  TITLE PAGE → DASHBOARD
 // ════════════════════════════════════════════════
 function startDash() {
-  document.getElementById('titlePage').style.display = 'none';
-  document.getElementById('dashPage').style.display  = 'flex';
+  showPage('dashPage');
   loadSession();
   if (session.gcId)  lockGcId(session.gcId);
   if (session.area)  document.getElementById('fArea').value = session.area;
@@ -1169,8 +1674,7 @@ function doLogout() {
   document.getElementById('capConfirm').classList.remove('vis');
   updateProgress();
   // Back to title page
-  document.getElementById('dashPage').style.display  = 'none';
-  document.getElementById('titlePage').style.display = 'flex';
+  showPage('titlePage');
 }
 
 // ════════════════════════════════════════════════
@@ -1184,6 +1688,334 @@ function openErrorModal(msg) {
 }
 document.querySelectorAll('.modal-backdrop').forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); });
+});
+
+// ════════════════════════════════════════════════
+//  PAGE NAVIGATION HELPERS
+// ════════════════════════════════════════════════
+function showPage(id) {
+  ['titlePage','dashPage','dataViewPage'].forEach(p => {
+    const el = document.getElementById(p);
+    el.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = id === 'titlePage' ? 'flex' : 'flex';
+  target.style.flexDirection = 'column';
+}
+
+function goToTitle() {
+  stopCamera();
+  showPage('titlePage');
+}
+
+// ════════════════════════════════════════════════
+//  DATA VIEW — ENTRY POINT
+// ════════════════════════════════════════════════
+function startDataView() {
+  showPage('dataViewPage');
+  switchDvTab('daily');
+  loadDailyCount();
+}
+
+function switchDvTab(tab) {
+  document.getElementById('tabDailyBtn').classList.toggle('active', tab === 'daily');
+  document.getElementById('tabDetailBtn').classList.toggle('active', tab === 'detail');
+  document.getElementById('tabDaily').classList.toggle('active', tab === 'daily');
+  document.getElementById('tabDetail').classList.toggle('active', tab === 'detail');
+  if (tab === 'detail' && dvDetailData.length === 0) initDetailView();
+}
+
+// ════════════════════════════════════════════════
+//  DATA VIEW — STATE
+// ════════════════════════════════════════════════
+let dvAllRecords   = [];   // all raw records from GAS
+let dvDetailData   = [];   // filtered records for detail tab
+let dvCurrentPage  = 1;
+const DV_PAGE_SIZE = 25;
+
+// ════════════════════════════════════════════════
+//  DATA VIEW — DAILY COUNT TAB
+// ════════════════════════════════════════════════
+async function loadDailyCount() {
+  const wrap = document.getElementById('dailyTableWrap');
+  wrap.innerHTML = '<div class="dv-loading"><span class="spinner"></span> Loading…</div>';
+
+  try {
+    const data = await jsonpRequest(GAS_DATA_URL, { action: 'getAllRecords' }, 30000);
+    if (!data.success) throw new Error(data.message || 'Failed to load records.');
+
+    dvAllRecords = data.records || [];
+    renderDailyCount(dvAllRecords);
+  } catch (e) {
+    wrap.innerHTML = '<div class="dv-empty">⚠ ' + e.message + '</div>';
+  }
+}
+
+function renderDailyCount(records) {
+  const wrap = document.getElementById('dailyTableWrap');
+  if (!records.length) {
+    wrap.innerHTML = '<div class="dv-empty">No records found.</div>';
+    return;
+  }
+
+  // Build pivot: { "date|area" → { damaged, empty, orphan } }
+  const pivot = {};
+  records.forEach(r => {
+    const date  = (r.timestamp || '').split(' ')[0] || '—';
+    const area  = r.area || '—';
+    const key   = date + '|||' + area;
+    if (!pivot[key]) pivot[key] = { date, area, DAMAGED: 0, EMPTY: 0, ORPHAN: 0 };
+    const t = (r.shipType || '').toUpperCase();
+    if (t.includes('DAMAGED')) pivot[key].DAMAGED++;
+    else if (t.includes('EMPTY')) pivot[key].EMPTY++;
+    else if (t.includes('ORPHAN')) pivot[key].ORPHAN++;
+  });
+
+  // Sort by date descending
+  const rows = Object.values(pivot).sort((a, b) => {
+    const da = parseDMY(a.date), db = parseDMY(b.date);
+    return db - da;
+  });
+
+  let html = '<table class="dv-table"><thead><tr>'
+    + '<th>Date</th><th>Area</th>'
+    + '<th>&#x1F4E6; Damaged</th><th>&#x1F4E6; Empty</th><th>&#x1F4E6; Orphan</th><th>Total</th>'
+    + '</tr></thead><tbody>';
+
+  rows.forEach(r => {
+    const total = r.DAMAGED + r.EMPTY + r.ORPHAN;
+    html += '<tr>'
+      + '<td>' + r.date + '</td>'
+      + '<td>' + r.area + '</td>'
+      + '<td class="num">' + (r.DAMAGED || '—') + '</td>'
+      + '<td class="num">' + (r.EMPTY   || '—') + '</td>'
+      + '<td class="num">' + (r.ORPHAN  || '—') + '</td>'
+      + '<td class="num" style="color:var(--green-h)">' + total + '</td>'
+      + '</tr>';
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function parseDMY(str) {
+  // "dd-mm-yyyy" → Date
+  const p = (str || '').split('-');
+  if (p.length === 3) return new Date(+p[2], +p[1]-1, +p[0]);
+  return new Date(0);
+}
+
+// ════════════════════════════════════════════════
+//  DATA VIEW — DETAIL TAB
+// ════════════════════════════════════════════════
+async function initDetailView() {
+  // Load fresh data + populate dropdowns
+  const wrap = document.getElementById('detailTableWrap');
+  wrap.innerHTML = '<div class="dv-loading"><span class="spinner"></span> Loading…</div>';
+
+  try {
+    const data = await jsonpRequest(GAS_DATA_URL, { action: 'getAllRecords' }, 30000);
+    if (!data.success) throw new Error(data.message || 'Failed to load records.');
+
+    dvAllRecords = data.records || [];
+    populateDetailDropdowns(dvAllRecords);
+    dvDetailData  = [...dvAllRecords];
+    dvCurrentPage = 1;
+    renderDetailTable();
+  } catch (e) {
+    wrap.innerHTML = '<div class="dv-empty">⚠ ' + e.message + '</div>';
+  }
+}
+
+function populateDetailDropdowns(records) {
+  const dates = [...new Set(records.map(r => (r.timestamp||'').split(' ')[0]).filter(Boolean))].sort().reverse();
+  const areas = [...new Set(records.map(r => r.area).filter(Boolean))].sort();
+
+  const dateSel = document.getElementById('dvFilterDate');
+  dateSel.innerHTML = '<option value="">All Dates</option>'
+    + dates.map(d => '<option value="' + d + '">' + d + '</option>').join('');
+
+  const areaSel = document.getElementById('dvFilterArea');
+  areaSel.innerHTML = '<option value="">All Areas</option>'
+    + areas.map(a => '<option value="' + a + '">' + a + '</option>').join('');
+}
+
+function applyDetailFilter() {
+  const filterDate = document.getElementById('dvFilterDate').value;
+  const filterType = document.getElementById('dvFilterType').value;
+  const filterArea = document.getElementById('dvFilterArea').value;
+
+  dvDetailData = dvAllRecords.filter(r => {
+    const date = (r.timestamp || '').split(' ')[0];
+    const ok1 = !filterDate || date === filterDate;
+    const ok2 = !filterType || (r.shipType || '').toUpperCase() === filterType.toUpperCase();
+    const ok3 = !filterArea || (r.area || '') === filterArea;
+    return ok1 && ok2 && ok3;
+  });
+
+  dvCurrentPage = 1;
+  renderDetailTable();
+}
+
+function renderDetailTable() {
+  const wrap = document.getElementById('detailTableWrap');
+  if (!dvDetailData.length) {
+    wrap.innerHTML = '<div class="dv-empty">No records match the selected filters.</div>';
+    updatePagination(0);
+    return;
+  }
+
+  const totalPages = Math.ceil(dvDetailData.length / DV_PAGE_SIZE);
+  const start = (dvCurrentPage - 1) * DV_PAGE_SIZE;
+  const slice = dvDetailData.slice(start, start + DV_PAGE_SIZE);
+
+  let html = '<table class="dv-table"><thead><tr>'
+    + '<th>#</th><th>Timestamp</th><th>AWB Number</th><th>GC ID</th>'
+    + '<th>Area</th><th>Shipment Type</th><th>Image</th>'
+    + '</tr></thead><tbody>';
+
+  slice.forEach((r, i) => {
+    const idx    = start + i + 1;
+    const imgUrl = r.imageUrl || '';
+    const imgCell = imgUrl
+      ? '<img class="img-thumb" src="' + driveThumb(imgUrl) + '" alt="img" onclick="openImgModal('' + escHtml(imgUrl) + '')" loading="lazy"/>'
+      : '<span style="color:var(--muted);font-size:10px;">No image</span>';
+
+    const typeShort = (r.shipType || '—').replace(' SHIPMENT','').replace(' Shipment','');
+
+    html += '<tr>'
+      + '<td class="muted">' + idx + '</td>'
+      + '<td class="muted">' + (r.timestamp || '—') + '</td>'
+      + '<td style="font-weight:700;color:var(--accent)">' + (r.awb || '—') + '</td>'
+      + '<td>' + (r.gcId || '—') + '</td>'
+      + '<td>' + (r.area || '—') + '</td>'
+      + '<td><span style="font-size:11px;background:var(--bg-input);border-radius:4px;padding:2px 7px;">' + typeShort + '</span></td>'
+      + '<td>' + imgCell + '</td>'
+      + '</tr>';
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  updatePagination(dvDetailData.length);
+}
+
+function driveThumb(url) {
+  // Convert Drive view URL to direct thumbnail
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w120';
+  return url;
+}
+
+function driveDirectUrl(url) {
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/uc?id=' + m[1] + '&export=view';
+  return url;
+}
+
+function escHtml(s) { return s.replace(/'/g, "\'"); }
+
+function updatePagination(total) {
+  const totalPages = Math.ceil(total / DV_PAGE_SIZE);
+  const start = total ? (dvCurrentPage - 1) * DV_PAGE_SIZE + 1 : 0;
+  const end   = Math.min(dvCurrentPage * DV_PAGE_SIZE, total);
+  document.getElementById('pageInfo').textContent =
+    total ? ('Showing ' + start + '–' + end + ' of ' + total + ' records') : 'No records';
+  document.getElementById('btnPrevPage').disabled = dvCurrentPage <= 1;
+  document.getElementById('btnNextPage').disabled = dvCurrentPage >= totalPages;
+}
+
+function changePage(delta) {
+  const totalPages = Math.ceil(dvDetailData.length / DV_PAGE_SIZE);
+  dvCurrentPage = Math.max(1, Math.min(totalPages, dvCurrentPage + delta));
+  renderDetailTable();
+  document.getElementById('detailTableWrap').scrollTop = 0;
+}
+
+// ════════════════════════════════════════════════
+//  IMAGE VIEWER MODAL
+// ════════════════════════════════════════════════
+let imgScale = 1;
+let imgPan   = { x: 0, y: 0 };
+let isDragging = false, dragStart = { x: 0, y: 0 }, panStart = { x: 0, y: 0 };
+
+function openImgModal(url) {
+  const modal = document.getElementById('imgModal');
+  const img   = document.getElementById('imgModalImg');
+  imgScale = 1; imgPan = { x: 0, y: 0 };
+  img.src = driveDirectUrl(url);
+  applyImgTransform();
+  modal.classList.add('open');
+}
+
+function closeImgModal() {
+  document.getElementById('imgModal').classList.remove('open');
+  document.getElementById('imgModalImg').src = '';
+}
+
+function imgZoom(factor) {
+  imgScale = Math.max(0.2, Math.min(8, imgScale * factor));
+  applyImgTransform();
+}
+function imgResetZoom() {
+  imgScale = 1; imgPan = { x:0, y:0 };
+  applyImgTransform();
+}
+function applyImgTransform() {
+  document.getElementById('imgModalImg').style.transform =
+    'translate(' + imgPan.x + 'px,' + imgPan.y + 'px) scale(' + imgScale + ')';
+}
+
+// Pan support (mouse + touch)
+const imgFrame = () => document.getElementById('imgModalFrame');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const frame = document.getElementById('imgModalFrame');
+
+  frame.addEventListener('mousedown', e => {
+    isDragging = true;
+    dragStart  = { x: e.clientX, y: e.clientY };
+    panStart   = { ...imgPan };
+  });
+  frame.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    imgPan.x = panStart.x + (e.clientX - dragStart.x);
+    imgPan.y = panStart.y + (e.clientY - dragStart.y);
+    applyImgTransform();
+  });
+  document.addEventListener('mouseup', () => { isDragging = false; });
+
+  // Wheel zoom
+  frame.addEventListener('wheel', e => {
+    e.preventDefault();
+    imgZoom(e.deltaY < 0 ? 1.12 : 0.88);
+  }, { passive: false });
+
+  // Touch zoom (pinch)
+  let lastDist = null;
+  frame.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      lastDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  });
+  frame.addEventListener('touchmove', e => {
+    if (e.touches.length === 2 && lastDist) {
+      const d = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      imgZoom(d / lastDist);
+      lastDist = d;
+    }
+  });
+  frame.addEventListener('touchend', () => { lastDist = null; });
+
+  // Close on backdrop click
+  document.getElementById('imgModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('imgModal')) closeImgModal();
+  });
 });
 </script>
 </body>
