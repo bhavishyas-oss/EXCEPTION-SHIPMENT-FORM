@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Exception Shipment Recording Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap');
+
+  :root {
+    --bg: #0e6b58;
+    --bg-dark: #0a4f40;
+    --bg-card: #115f4e;
+    --bg-input: #0d5444;
+    --bg-input-focus: #0f6352;
+    --accent: #e9df43;
+    --accent-hover: #f5eb50;
+    --red: #e74c3c;
+    --red-hover: #c0392b;
+    --text: #ffffff;
+    --text-muted: #a8d5c8;
+    --border: #1a7a63;
+    --border-focus: #e9df43;
+    --submit-bg: #1a9478;
+    --submit-hover: #22b090;
+    --radius: 8px;
+    --font: 'Barlow', sans-serif;
+    --font-display: 'Barlow Condensed', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── LOGIN PAGE ─── */
+  #loginPage {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+  }
+
+  .login-header {
+    background: var(--bg-dark);
+    border-bottom: 2px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .login-header .logo-wrap {
+    background: #fff;
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .login-header .logo-wrap svg { height: 36px; width: auto; }
+
+  .login-header h1 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .login-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .login-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+  }
+
+  .login-card-header {
+    background: var(--accent);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .login-card-header span {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--bg-dark);
+    text-transform: uppercase;
+  }
+
+  .login-card-body { padding: 28px 24px 24px; }
+
+  .field-group { margin-bottom: 18px; }
+  .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .field-label .req { color: var(--accent); margin-left: 3px; }
+
+  input[type="text"], input[type="password"], select {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type="text"]::placeholder,
+  input[type="password"]::placeholder { color: #5a9a8a; }
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  select:focus { border-color: var(--border-focus); background: var(--bg-input-focus); }
+
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23e9df43' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  select option { background: var(--bg-dark); }
+
+  .btn-login {
+    width: 100%;
+    background: var(--accent);
+    color: var(--bg-dark);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .btn-login:hover { background: var(--accent-hover); }
+  .btn-login:active { transform: scale(0.98); }
+
+  .login-error {
+    background: rgba(231,76,60,0.18);
+    border: 1px solid var(--red);
+    border-radius: 6px;
+    color: #ff8a7a;
+    font-size: 13px;
+    padding: 10px 14px;
+    margin-top: 14px;
+    display: none;
+  }
+
+  /* ─── DASHBOARD PAGE ─── */
+  #dashPage { display: none; min-height: 100vh; flex-direction: column; }
+
+  .dash-header {
+    background: var(--bg-dark);
+    border-bottom: 2px solid var(--border);
+    padding: 0 20px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .dash-header .logo-wrap {
+    background: #fff;
+    border-radius: 6px;
+    padding: 5px 9px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .dash-header .logo-wrap svg { height: 32px; width: auto; }
+
+  .dash-header-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .btn-logout {
+    background: var(--red);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--radius);
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-logout:hover { background: var(--red-hover); }
+  .btn-logout svg { width: 14px; height: 14px; }
+
+  .dash-body {
+    flex: 1;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    background: var(--accent);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel-header span {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--bg-dark);
+    text-transform: uppercase;
+  }
+  .panel-header svg { width: 18px; height: 18px; color: var(--bg-dark); flex-shrink: 0; }
+
+  .panel-body { padding: 20px; }
+
+  /* GC ID badge */
+  .gcid-badge {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .gcid-badge .gcid-val {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+  }
+  .gcid-badge.unset { display: none; }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 18px 0 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+
+  /* Submit btn */
+  .btn-submit {
+    width: 100%;
+    background: var(--submit-bg);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 4px;
+  }
+  .btn-submit:hover:not(:disabled) { background: var(--submit-hover); }
+  .btn-submit:active:not(:disabled) { transform: scale(0.98); }
+  .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-submit svg { width: 16px; height: 16px; }
+
+  /* ─── CAMERA PANEL ─── */
+  .camera-step-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    padding: 8px 0 12px;
+  }
+  .camera-step-hint strong { color: var(--accent); }
+
+  .camera-viewport {
+    background: var(--bg-input);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .camera-viewport:hover { border-color: var(--accent); }
+  .camera-viewport.active { border-color: var(--accent); border-style: solid; }
+
+  .camera-viewport video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    transform: scaleX(1) !important; /* non-mirrored */
+  }
+  .camera-viewport.active video { display: block; }
+
+  .camera-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #5a9a8a;
+    pointer-events: none;
+  }
+  .camera-placeholder svg { width: 48px; height: 48px; }
+  .camera-placeholder p {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .camera-placeholder small {
+    font-size: 11px;
+    color: #4a8878;
+    letter-spacing: 0.05em;
+  }
+
+  .camera-viewport.active .camera-placeholder { display: none; }
+
+  /* Capture controls */
+  .capture-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .btn-capture {
+    flex: 1;
+    background: var(--accent);
+    color: var(--bg-dark);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s;
+    display: none;
+  }
+  .btn-capture:hover { background: var(--accent-hover); }
+  .btn-capture svg { width: 16px; height: 16px; }
+  .btn-capture.visible { display: flex; }
+
+  .btn-retake {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 11px 14px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-retake:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-retake svg { width: 14px; height: 14px; }
+  .btn-retake.visible { display: flex; }
+
+  /* Captured preview strip */
+  .captured-strip {
+    margin-top: 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: none;
+  }
+  .captured-strip.visible { display: block; }
+  .captured-strip img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    display: block;
+    background: #0a3d30;
+  }
+  .captured-strip .cap-label {
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .captured-strip .cap-label svg { width: 12px; height: 12px; color: var(--accent); }
+
+  /* ─── MODAL ─── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
+    transform: translateY(16px);
+    transition: transform 0.2s;
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    background: var(--accent);
+    padding: 12px 18px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+  .modal-body {
+    padding: 20px 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .modal-footer {
+    padding: 12px 18px 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .btn-modal-ok {
+    background: var(--red);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-modal-ok:hover { background: var(--red-hover); }
+  .btn-modal-cancel {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 6px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-modal-cancel:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Success modal */
+  .modal-success .modal-header { background: var(--submit-bg); }
+  .modal-success .btn-modal-ok { background: var(--submit-bg); }
+  .modal-success .btn-modal-ok:hover { background: var(--submit-hover); }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Validation error inline */
+  .field-error {
+    font-size: 11px;
+    color: #ff8a7a;
+    margin-top: 5px;
+    display: none;
+    letter-spacing: 0.04em;
+  }
+  .field-error.show { display: block; }
+  input.invalid, select.invalid { border-color: var(--red) !important; }
+
+  /* upload status */
+  .upload-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    text-align: center;
+    min-height: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .dash-body {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .dash-header-title { font-size: 13px; }
+    .dash-header { padding: 0 12px; gap: 10px; }
+    .dash-body { padding: 12px; gap: 12px; }
+    .panel-body { padding: 14px; }
+  }
+
+  canvas { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN PAGE ═══════════════════ -->
+<div id="loginPage">
+  <header class="login-header">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="20,10 36,30 20,50 8,38 14,30 8,22" fill="#e9df43"/>
+        <polygon points="36,10 52,30 36,50 24,38 30,30 24,22" fill="#1C856F"/>
+        <text x="60" y="38" font-family="Barlow Condensed,Arial" font-weight="800" font-size="28" fill="#1C856F">SHADOWFAX</text>
+        <text x="60" y="52" font-family="Barlow,Arial" font-size="11" fill="#888">Think ahead!</text>
+      </svg>
+    </div>
+    <h1>Exception Shipment Recording Dashboard</h1>
+  </header>
+  <div class="login-body">
+    <div class="login-card">
+      <div class="login-card-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#0a4f40"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Operator Login</span>
+      </div>
+      <div class="login-card-body">
+        <div class="field-group">
+          <label class="field-label" for="loginUserId">User ID <span class="req">★</span></label>
+          <input type="text" id="loginUserId" placeholder="Enter your User ID" autocomplete="username" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="loginPassword">Password <span class="req">★</span></label>
+          <input type="password" id="loginPassword" placeholder="Enter your Password" autocomplete="current-password" />
+        </div>
+        <button class="btn-login" id="loginBtn" onclick="doLogin()">
+          <span id="loginBtnText">LOGIN</span>
+        </button>
+        <div class="login-error" id="loginError"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ DASHBOARD PAGE ═══════════════════ -->
+<div id="dashPage" style="display:none; flex-direction:column;">
+  <header class="dash-header">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="20,10 36,30 20,50 8,38 14,30 8,22" fill="#e9df43"/>
+        <polygon points="36,10 52,30 36,50 24,38 30,30 24,22" fill="#1C856F"/>
+        <text x="60" y="38" font-family="Barlow Condensed,Arial" font-weight="800" font-size="28" fill="#1C856F">SHADOWFAX</text>
+        <text x="60" y="52" font-family="Barlow,Arial" font-size="11" fill="#888">Think ahead!</text>
+      </svg>
+    </div>
+    <div class="dash-header-title">Exception Shipment Recording Dashboard</div>
+    <button class="btn-logout" onclick="confirmLogout()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </button>
+  </header>
+
+  <div class="dash-body">
+    <!-- LEFT PANEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Shipment Data Entry</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- GC ID badge (shown after first entry) -->
+        <div class="gcid-badge unset" id="gcidBadge">
+          <span style="font-size:11px;letter-spacing:0.08em;">GC ID (session)</span>
+          <span class="gcid-val" id="gcidBadgeVal">—</span>
+        </div>
+
+        <!-- GC ID field (hidden after set) -->
+        <div class="field-group" id="gcidFieldGroup">
+          <label class="field-label" for="fGcId">GC ID <span class="req">★</span></label>
+          <input type="text" id="fGcId" placeholder="Enter GC ID" />
+          <div class="field-error" id="errGcId">GC ID is required.</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="fArea">Area <span class="req">★</span></label>
+          <input type="text" id="fArea" placeholder="Enter area name" />
+          <div class="field-error" id="errArea">Area is required.</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="fSite">Site Name <span class="req">★</span></label>
+          <select id="fSite">
+            <option value="">— Select Site —</option>
+            <option value="ONE NCR">ONE NCR</option>
+            <option value="NCR BILASPUR">NCR BILASPUR</option>
+            <option value="NCR TAURU">NCR TAURU</option>
+          </select>
+          <div class="field-error" id="errSite">Please select a site.</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="fShipType">Shipment Type <span class="req">★</span></label>
+          <select id="fShipType">
+            <option value="">— Select Type —</option>
+            <option value="DAMAGED SHIPMENT">DAMAGED SHIPMENT</option>
+            <option value="EMPTY SHIPMENT">EMPTY SHIPMENT</option>
+            <option value="ORPHAN SHIPMENT">ORPHAN SHIPMENT</option>
+          </select>
+          <div class="field-error" id="errShipType">Please select a shipment type.</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="fAwb">AWB Number <span class="req">★</span></label>
+          <input type="text" id="fAwb" placeholder="Scan or type AWB" autocomplete="off" />
+          <div class="field-error" id="errAwb">AWB Number is required.</div>
+        </div>
+
+        <div class="progress-row">
+          <span>Requirements met</span>
+          <span id="progressLabel">0 / 6</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+        <button class="btn-submit" id="submitBtn" onclick="submitRecord()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="submitBtnText">Submit Record</span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Photo Capture System</span>
+      </div>
+      <div class="panel-body">
+
+        <div class="camera-step-hint">
+          Click the area below to start · Capture: <strong>SHIPMENT IMAGE</strong>
+        </div>
+
+        <div class="camera-viewport" id="cameraViewport" onclick="activateCamera()">
+          <div class="camera-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <p>Click to Activate Camera</p>
+            <small>1 photo required — Shipment Image</small>
+          </div>
+          <video id="cameraVideo" playsinline autoplay></video>
+        </div>
+
+        <div class="capture-controls">
+          <button class="btn-capture" id="captureBtn" onclick="capturePhoto()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2l-2-3H9L7 7H5z"/></svg>
+            Click to Capture
+          </button>
+          <button class="btn-retake" id="retakeBtn" onclick="retakePhoto()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+            Retake
+          </button>
+        </div>
+
+        <div class="captured-strip" id="capturedStrip">
+          <img id="capturedPreview" src="" alt="Captured shipment image" />
+          <div class="cap-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Image captured — ready for submission
+          </div>
+        </div>
+
+        <div class="upload-status" id="uploadStatus"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+<!-- Logout confirm -->
+<div class="modal-backdrop" id="modalLogout">
+  <div class="modal">
+    <div class="modal-header">Confirm Logout</div>
+    <div class="modal-body">Are you sure you want to logout? Your GC ID and session will be cleared.</div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('modalLogout')">Cancel</button>
+      <button class="btn-modal-ok" onclick="doLogout()">OK, Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success -->
+<div class="modal-backdrop modal-success" id="modalSuccess">
+  <div class="modal">
+    <div class="modal-header">Record Submitted Successfully</div>
+    <div class="modal-body" id="modalSuccessBody">Shipment record has been saved. Ready for next entry.</div>
+    <div class="modal-footer">
+      <button class="btn-modal-ok" onclick="closeModal('modalSuccess')">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Error -->
+<div class="modal-backdrop" id="modalError">
+  <div class="modal">
+    <div class="modal-header">Submission Error</div>
+    <div class="modal-body" id="modalErrorBody">An error occurred.</div>
+    <div class="modal-footer">
+      <button class="btn-modal-ok" onclick="closeModal('modalError')">Close</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="captureCanvas"></canvas>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG — REPLACE WITH YOUR DEPLOYED GAS URLs
+// ══════════════════════════════════════════════
+const GAS_AUTH_URL  = 'YOUR_AUTH_GAS_DEPLOYED_URL';   // credentials sheet script
+const GAS_DATA_URL  = 'YOUR_DATA_GAS_DEPLOYED_URL';   // data sheet script
+
+// ══════════════════════════════════════════════
+//  SESSION
+// ══════════════════════════════════════════════
+let session = {
+  userId: null,
+  gcId: null,
+  area: null,
+  site: null,
+};
+
+function saveSession() { sessionStorage.setItem('sfSession', JSON.stringify(session)); }
+function loadSession() {
+  const s = sessionStorage.getItem('sfSession');
+  if (s) { session = JSON.parse(s); return true; }
+  return false;
+}
+function clearSession() { session = { userId:null, gcId:null, area:null, site:null }; sessionStorage.removeItem('sfSession'); }
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+window.addEventListener('load', () => {
+  if (loadSession() && session.userId) {
+    showDashboard();
+  }
+  // allow Enter key on login
+  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('loginUserId').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  // progress tracking
+  ['fGcId','fArea','fSite','fShipType','fAwb'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateProgress);
+    document.getElementById(id).addEventListener('change', updateProgress);
+  });
+});
+
+// ══════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════
+async function doLogin() {
+  const userId = document.getElementById('loginUserId').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+
+  if (!userId || !password) {
+    errEl.textContent = 'Please enter both User ID and Password.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('loginBtn');
+  document.getElementById('loginBtnText').innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    const params = new URLSearchParams({ action: 'authenticate', userId, password });
+    const resp = await fetch(`${GAS_AUTH_URL}?${params}`);
+    const data = await resp.json();
+
+    if (data.success) {
+      session.userId = userId;
+      session.site = data.site || null;
+      saveSession();
+      showDashboard();
+    } else {
+      errEl.textContent = data.message || 'Invalid credentials. Please try again.';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = 'Connection error. Check your network and try again.';
+    errEl.style.display = 'block';
+  } finally {
+    document.getElementById('loginBtnText').textContent = 'LOGIN';
+    btn.disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SHOW / HIDE PAGES
+// ══════════════════════════════════════════════
+function showDashboard() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('dashPage').style.display = 'flex';
+
+  // Restore persisted GC ID / Area / Site
+  if (session.gcId) {
+    lockGcId(session.gcId);
+  }
+  if (session.area) {
+    document.getElementById('fArea').value = session.area;
+  }
+  if (session.site) {
+    const siteEl = document.getElementById('fSite');
+    // pre-select if site from credentials matches
+    for (let i = 0; i < siteEl.options.length; i++) {
+      if (siteEl.options[i].value === session.site) { siteEl.value = session.site; break; }
+    }
+  }
+  updateProgress();
+}
+
+function showLogin() {
+  document.getElementById('dashPage').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('loginUserId').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════
+//  GC ID LOCK
+// ══════════════════════════════════════════════
+function lockGcId(val) {
+  session.gcId = val;
+  saveSession();
+  // show badge, hide input
+  document.getElementById('gcidBadgeVal').textContent = val;
+  document.getElementById('gcidBadge').classList.remove('unset');
+  document.getElementById('gcidFieldGroup').style.display = 'none';
+  updateProgress();
+}
+
+// ══════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════
+function updateProgress() {
+  const fields = [
+    session.gcId || document.getElementById('fGcId').value.trim(),
+    document.getElementById('fArea').value.trim(),
+    document.getElementById('fSite').value,
+    document.getElementById('fShipType').value,
+    document.getElementById('fAwb').value.trim(),
+    capturedBlob ? 'ok' : '',
+  ];
+  const met = fields.filter(Boolean).length;
+  const pct = Math.round((met / 6) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${met} / 6`;
+}
+
+// ══════════════════════════════════════════════
+//  CAMERA
+// ══════════════════════════════════════════════
+let mediaStream = null;
+let capturedBlob = null;
+
+async function activateCamera() {
+  const viewport = document.getElementById('cameraViewport');
+  if (viewport.classList.contains('active')) return; // already live
+  if (capturedBlob) return; // already have image
+
+  try {
+    const constraints = {
+      video: {
+        facingMode: { ideal: 'environment' },
+        focusMode: 'continuous',
+        exposureMode: 'continuous',
+        whiteBalanceMode: 'continuous',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      }
+    };
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const video = document.getElementById('cameraVideo');
+    video.srcObject = mediaStream;
+    video.style.transform = 'scaleX(1)'; // ensure non-mirrored
+    await video.play();
+    viewport.classList.add('active');
+    document.getElementById('captureBtn').classList.add('visible');
+  } catch (err) {
+    alert('Camera access denied or unavailable. Please allow camera permission and try again.');
+  }
+}
+
+function capturePhoto() {
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('captureCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+
+  canvas.toBlob(blob => {
+    capturedBlob = blob;
+    const url = URL.createObjectURL(blob);
+    document.getElementById('capturedPreview').src = url;
+    document.getElementById('capturedStrip').classList.add('visible');
+
+    // stop camera stream
+    stopCamera();
+    document.getElementById('captureBtn').classList.remove('visible');
+    document.getElementById('retakeBtn').classList.add('visible');
+    updateProgress();
+  }, 'image/jpeg', 1.0); // no compression
+}
+
+function retakePhoto() {
+  capturedBlob = null;
+  document.getElementById('capturedStrip').classList.remove('visible');
+  document.getElementById('retakeBtn').classList.remove('visible');
+  document.getElementById('cameraViewport').classList.remove('active');
+  document.getElementById('cameraVideo').srcObject = null;
+  updateProgress();
+  // re-activate camera
+  activateCamera();
+}
+
+function stopCamera() {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+  }
+  document.getElementById('cameraViewport').classList.remove('active');
+}
+
+// ══════════════════════════════════════════════
+//  VALIDATION
+// ══════════════════════════════════════════════
+function clearErrors() {
+  ['errGcId','errArea','errSite','errShipType','errAwb'].forEach(id => {
+    document.getElementById(id).classList.remove('show');
+  });
+  ['fGcId','fArea','fSite','fShipType','fAwb'].forEach(id => {
+    document.getElementById(id).classList.remove('invalid');
+  });
+}
+
+function validateForm() {
+  clearErrors();
+  let ok = true;
+
+  const gcId = session.gcId || document.getElementById('fGcId').value.trim();
+  if (!gcId) { showErr('errGcId', 'fGcId'); ok = false; }
+
+  const area = document.getElementById('fArea').value.trim();
+  if (!area) { showErr('errArea', 'fArea'); ok = false; }
+
+  const site = document.getElementById('fSite').value;
+  if (!site) { showErr('errSite', 'fSite'); ok = false; }
+
+  const shipType = document.getElementById('fShipType').value;
+  if (!shipType) { showErr('errShipType', 'fShipType'); ok = false; }
+
+  const awb = document.getElementById('fAwb').value.trim();
+  if (!awb) { showErr('errAwb', 'fAwb'); ok = false; }
+
+  if (!capturedBlob) {
+    document.getElementById('uploadStatus').textContent = '⚠ Please capture a shipment image before submitting.';
+    ok = false;
+  }
+
+  return ok;
+}
+
+function showErr(errId, fieldId) {
+  document.getElementById(errId).classList.add('show');
+  document.getElementById(fieldId).classList.add('invalid');
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════════════
+let isSubmitting = false;
+
+async function submitRecord() {
+  if (isSubmitting) return;
+  if (!validateForm()) return;
+
+  isSubmitting = true;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  document.getElementById('submitBtnText').innerHTML = '<span class="spinner"></span> Uploading…';
+  document.getElementById('uploadStatus').textContent = 'Uploading image to Drive…';
+
+  const gcId = session.gcId || document.getElementById('fGcId').value.trim();
+  const area = document.getElementById('fArea').value.trim();
+  const site = document.getElementById('fSite').value;
+  const shipType = document.getElementById('fShipType').value;
+  const awb = document.getElementById('fAwb').value.trim();
+
+  // Lock GC ID and Area for session
+  if (!session.gcId) lockGcId(gcId);
+  session.area = area;
+  session.site = site;
+  saveSession();
+
+  try {
+    // Convert blob to base64
+    const base64 = await blobToBase64(capturedBlob);
+
+    const payload = {
+      action: 'submitRecord',
+      gcId,
+      area,
+      site,
+      shipType,
+      awb,
+      userId: session.userId,
+      imageBase64: base64,
+      imageMime: 'image/jpeg',
+    };
+
+    document.getElementById('uploadStatus').textContent = 'Saving record…';
+    const resp = await fetch(GAS_DATA_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+
+    if (data.success) {
+      openModal('modalSuccess');
+      document.getElementById('modalSuccessBody').textContent =
+        `Record saved for AWB ${awb}. Image stored at Drive. Ready for next entry.`;
+      clearAfterSubmit();
+    } else {
+      openErrorModal(data.message || 'Server returned an error. Please try again.');
+    }
+  } catch (e) {
+    openErrorModal('Network error during submission. Please check connection and retry.');
+  } finally {
+    isSubmitting = false;
+    btn.disabled = false;
+    document.getElementById('submitBtnText').textContent = 'Submit Record';
+    document.getElementById('uploadStatus').textContent = '';
+  }
+}
+
+function clearAfterSubmit() {
+  // clear only AWB, Shipment Type, and captured image
+  document.getElementById('fAwb').value = '';
+  document.getElementById('fShipType').value = '';
+  capturedBlob = null;
+  document.getElementById('capturedStrip').classList.remove('visible');
+  document.getElementById('retakeBtn').classList.remove('visible');
+  document.getElementById('captureBtn').classList.remove('visible');
+  document.getElementById('cameraViewport').classList.remove('active');
+  stopCamera();
+  clearErrors();
+  updateProgress();
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════════════
+function confirmLogout() { openModal('modalLogout'); }
+
+function doLogout() {
+  closeModal('modalLogout');
+  stopCamera();
+  capturedBlob = null;
+  clearSession();
+  showLogin();
+}
+
+// ══════════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openErrorModal(msg) {
+  document.getElementById('modalErrorBody').textContent = msg;
+  openModal('modalError');
+}
+
+// close modals on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); });
+});
+</script>
+</body>
+</html>
