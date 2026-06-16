@@ -1335,6 +1335,8 @@ window.addEventListener('load', () => {
     document.getElementById(id).addEventListener('input', updateProgress);
   });
   document.getElementById('fAwb').addEventListener('input', updateProgress);
+  // Init image modal pan/zoom listeners (safe — DOM is fully ready here)
+  initImgModalListeners();
 });
 
 // ════════════════════════════════════════════════
@@ -1965,16 +1967,16 @@ function applyImgTransform() {
     'translate(' + imgPan.x + 'px,' + imgPan.y + 'px) scale(' + imgScale + ')';
 }
 
-// Pan support (mouse + touch)
-const imgFrame = () => document.getElementById('imgModalFrame');
-
-document.addEventListener('DOMContentLoaded', () => {
+// Pan support (mouse + touch) — registered safely after DOM ready
+function initImgModalListeners() {
   const frame = document.getElementById('imgModalFrame');
+  if (!frame) return; // safety guard
 
   frame.addEventListener('mousedown', e => {
     isDragging = true;
     dragStart  = { x: e.clientX, y: e.clientY };
     panStart   = { ...imgPan };
+    e.preventDefault();
   });
   frame.addEventListener('mousemove', e => {
     if (!isDragging) return;
@@ -1984,13 +1986,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.addEventListener('mouseup', () => { isDragging = false; });
 
-  // Wheel zoom
   frame.addEventListener('wheel', e => {
     e.preventDefault();
     imgZoom(e.deltaY < 0 ? 1.12 : 0.88);
   }, { passive: false });
 
-  // Touch zoom (pinch)
   let lastDist = null;
   frame.addEventListener('touchstart', e => {
     if (e.touches.length === 2) {
@@ -2012,11 +2012,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   frame.addEventListener('touchend', () => { lastDist = null; });
 
-  // Close on backdrop click
   document.getElementById('imgModal').addEventListener('click', e => {
     if (e.target === document.getElementById('imgModal')) closeImgModal();
   });
-});
+}
 </script>
 </body>
 </html>
