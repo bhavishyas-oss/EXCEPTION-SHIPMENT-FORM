@@ -392,16 +392,17 @@ html, body {
 /* Image viewer modal */
 #imgModal {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.88);
+  background: rgba(0,0,0,0.92);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.25s;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  padding: 16px;
 }
 #imgModal.open { opacity: 1; pointer-events: all; }
 
@@ -439,24 +440,31 @@ html, body {
 .img-modal-frame {
   flex: 1;
   min-height: 0;
-  max-width: 92vw;
-  max-height: calc(100vh - 120px);
+  width: 90vw;
+  max-width: 90vw;
+  max-height: calc(100vh - 100px);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   cursor: grab;
   position: relative;
+  border-radius: 8px;
+  background: #0a3d30;
 }
 .img-modal-frame:active { cursor: grabbing; }
 #imgModalImg {
+  width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
+  min-width: 60vw;
   object-fit: contain;
   transform-origin: center center;
-  transition: transform 0.15s;
+  transition: transform 0.15s, opacity 0.3s;
   user-select: none;
   pointer-events: none;
+  display: block;
 }
 
 /* Loading state */
@@ -1919,15 +1927,16 @@ function renderDetailTable() {
 }
 
 function driveThumb(url) {
-  // Convert Drive view URL to direct thumbnail
+  // Drive thumbnail API — works without auth for shared files
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w120';
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w200';
   return url;
 }
 
 function driveDirectUrl(url) {
+  // Use thumbnail API with large size — works without auth for "Anyone with link" shared files
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return 'https://drive.google.com/uc?id=' + m[1] + '&export=view';
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1600';
   return url;
 }
 
@@ -1960,10 +1969,32 @@ let isDragging = false, dragStart = { x: 0, y: 0 }, panStart = { x: 0, y: 0 };
 function openImgModal(url) {
   const modal = document.getElementById('imgModal');
   const img   = document.getElementById('imgModalImg');
+  const frame = document.getElementById('imgModalFrame');
+
+  // Reset state
   imgScale = 1; imgPan = { x: 0, y: 0 };
-  img.src = driveDirectUrl(url);
   applyImgTransform();
+
+  // Show loading state
+  img.style.opacity = '0';
+  img.style.transition = 'opacity 0.3s';
+  frame.style.background = '#0a3d30';
   modal.classList.add('open');
+
+  // Load via Drive thumbnail (large size, no auth required)
+  img.onload = function() {
+    img.style.opacity = '1';
+    frame.style.background = 'transparent';
+  };
+  img.onerror = function() {
+    // Fallback: try the original URL directly
+    if (img.src !== url) {
+      img.src = url;
+    } else {
+      frame.innerHTML = '<div style="color:#a8d5c8;font-size:14px;text-align:center;padding:20px;">Image could not be loaded.<br>Click the Drive link to view it directly.<br><br><a href="' + url + '" target="_blank" style="color:#e9df43;">' + url.substring(0,60) + '...</a></div>';
+    }
+  };
+  img.src = driveDirectUrl(url);
 }
 
 function closeImgModal() {
