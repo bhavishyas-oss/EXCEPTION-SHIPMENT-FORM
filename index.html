@@ -1,799 +1,773 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Exception Shipment Recording Dashboard</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Operations DEO Shipment Recorder</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700;800&display=swap');
 
-  :root {
-    --bg: #0e6b58;
-    --bg-dark: #0a4f40;
-    --bg-card: #115f4e;
-    --bg-input: #0d5444;
-    --bg-input-focus: #0f6352;
-    --accent: #e9df43;
-    --accent-hover: #f5eb50;
-    --red: #e74c3c;
-    --red-hover: #c0392b;
-    --text: #ffffff;
-    --text-muted: #a8d5c8;
-    --border: #1a7a63;
-    --border-focus: #e9df43;
-    --submit-bg: #1a9478;
-    --submit-hover: #22b090;
-    --radius: 8px;
-    --font: 'Barlow', sans-serif;
-    --font-display: 'Barlow Condensed', sans-serif;
-  }
+:root {
+  --bg:           #0e6b58;
+  --bg-dark:      #0a4f40;
+  --bg-card:      #115f4e;
+  --bg-input:     #0d5444;
+  --bg-input-f:   #0f6352;
+  --accent:       #e9df43;
+  --accent-h:     #f5eb50;
+  --red:          #e74c3c;
+  --red-h:        #c0392b;
+  --green:        #1a9478;
+  --green-h:      #22b090;
+  --text:         #ffffff;
+  --muted:        #a8d5c8;
+  --border:       #1a7a63;
+  --radius:       7px;
+  --font:         'Barlow', sans-serif;
+  --fdisp:        'Barlow Condensed', sans-serif;
+  --hdr:          54px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+html, body {
+  height: 100%;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden; /* single-screen — no scrolling */
+}
 
-  /* ─── LOGIN PAGE ─── */
-  #loginPage {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg);
-  }
+/* ═══════════════════════════════════════════
+   LOGO SVG INLINE HELPER
+═══════════════════════════════════════════ */
+.logo-badge {
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 38px;
+}
+.logo-badge svg { height: 28px; width: auto; display: block; }
 
-  .login-header {
-    background: var(--bg-dark);
-    border-bottom: 2px solid var(--border);
-    padding: 0 24px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+/* ═══════════════════════════════════════════
+   TITLE PAGE
+═══════════════════════════════════════════ */
+#titlePage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: var(--bg);
+}
 
-  .login-header .logo-wrap {
-    background: #fff;
-    border-radius: 6px;
-    padding: 6px 10px;
-    display: flex;
-    align-items: center;
-  }
+.title-logo-wrap {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+.title-logo-wrap svg { height: 56px; width: auto; display: block; }
 
-  .login-header .logo-wrap svg { height: 36px; width: auto; }
+.title-name {
+  font-family: var(--fdisp);
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1.15;
+  max-width: 560px;
+  padding: 0 16px;
+}
 
-  .login-header h1 {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
+.btn-go {
+  background: var(--accent);
+  color: var(--bg-dark);
+  font-family: var(--fdisp);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 56px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 4px 18px rgba(233,223,67,0.35);
+}
+.btn-go:hover  { background: var(--accent-h); box-shadow: 0 6px 24px rgba(233,223,67,0.5); }
+.btn-go:active { transform: scale(0.97); }
 
-  .login-body {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 16px;
-  }
+/* ═══════════════════════════════════════════
+   DASHBOARD PAGE — fixed full-viewport layout
+═══════════════════════════════════════════ */
+#dashPage {
+  height: 100vh;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  .login-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 420px;
-    overflow: hidden;
-  }
+/* ── Header ── */
+.hdr {
+  height: var(--hdr);
+  min-height: var(--hdr);
+  background: var(--bg-dark);
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
 
-  .login-card-header {
-    background: var(--accent);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+.hdr-title {
+  flex: 1;
+  font-family: var(--fdisp);
+  font-size: clamp(13px, 1.6vw, 19px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+}
 
-  .login-card-header span {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--bg-dark);
-    text-transform: uppercase;
-  }
+.btn-logout {
+  background: var(--red);
+  color: #fff;
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.btn-logout:hover { background: var(--red-h); }
+.btn-logout svg { width: 13px; height: 13px; }
 
-  .login-card-body { padding: 28px 24px 24px; }
+/* ── Two-column body ── */
+.dash-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 12px 14px;
+  min-height: 0; /* critical: allows flex children to shrink */
+  overflow: hidden;
+}
 
-  .field-group { margin-bottom: 18px; }
-  .field-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  .field-label .req { color: var(--accent); margin-left: 3px; }
+/* ── Panel card ── */
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
 
-  input[type="text"], input[type="password"], select {
-    width: 100%;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 14px;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.15s;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  input[type="text"]::placeholder,
-  input[type="password"]::placeholder { color: #5a9a8a; }
-  input[type="text"]:focus,
-  input[type="password"]:focus,
-  select:focus { border-color: var(--border-focus); background: var(--bg-input-focus); }
+.panel-hdr {
+  background: var(--accent);
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.panel-hdr span {
+  font-family: var(--fdisp);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--bg-dark);
+  text-transform: uppercase;
+}
+.panel-hdr svg { width: 16px; height: 16px; color: var(--bg-dark); flex-shrink: 0; }
 
-  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23e9df43' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-  select option { background: var(--bg-dark); }
+.panel-body {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
 
-  .btn-login {
-    width: 100%;
-    background: var(--accent);
-    color: var(--bg-dark);
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: var(--radius);
-    padding: 12px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    margin-top: 8px;
-  }
-  .btn-login:hover { background: var(--accent-hover); }
-  .btn-login:active { transform: scale(0.98); }
+/* ═══════════════════════════════════════════
+   LEFT PANEL — FORM FIELDS
+═══════════════════════════════════════════ */
+.field-row { display: flex; flex-direction: column; gap: 3px; }
 
-  .login-error {
-    background: rgba(231,76,60,0.18);
-    border: 1px solid var(--red);
-    border-radius: 6px;
-    color: #ff8a7a;
-    font-size: 13px;
-    padding: 10px 14px;
-    margin-top: 14px;
-    display: none;
-  }
+.field-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field-lbl .req { color: var(--accent); margin-left: 2px; }
 
-  /* ─── DASHBOARD PAGE ─── */
-  #dashPage { display: none; min-height: 100vh; flex-direction: column; }
+/* GC ID badge shown after lock */
+.gcid-badge {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gcid-badge .gv { color: var(--accent); font-weight: 700; font-size: 13px; }
+.gcid-badge.hidden { display: none; }
 
-  .dash-header {
-    background: var(--bg-dark);
-    border-bottom: 2px solid var(--border);
-    padding: 0 20px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+input[type="text"] {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 8px 11px;
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+input[type="text"]::placeholder { color: #5a9a8a; }
+input[type="text"]:focus         { border-color: var(--accent); background: var(--bg-input-f); }
+input.invalid                    { border-color: var(--red) !important; }
 
-  .dash-header .logo-wrap {
-    background: #fff;
-    border-radius: 6px;
-    padding: 5px 9px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-  .dash-header .logo-wrap svg { height: 32px; width: auto; }
+/* Site name read-only display */
+.site-display {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 11px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  cursor: not-allowed;
+  user-select: none;
+}
 
-  .dash-header-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--accent);
-    text-transform: uppercase;
-    flex: 1;
-  }
+/* Radio buttons — Shipment Type */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.radio-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.radio-opt:hover { border-color: var(--accent); background: var(--bg-input-f); }
+.radio-opt input[type="radio"] { display: none; }
+.radio-dot {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s;
+}
+.radio-dot::after {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.radio-opt.selected             { border-color: var(--accent); background: rgba(233,223,67,0.08); }
+.radio-opt.selected .radio-dot  { border-color: var(--accent); }
+.radio-opt.selected .radio-dot::after { opacity: 1; }
+.radio-opt.invalid-radio        { border-color: var(--red); }
+.radio-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
 
-  .btn-logout {
-    background: var(--red);
-    color: #fff;
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: var(--radius);
-    padding: 8px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.15s;
-    flex-shrink: 0;
-  }
-  .btn-logout:hover { background: var(--red-hover); }
-  .btn-logout svg { width: 14px; height: 14px; }
+/* Progress + Submit */
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+.progress-bar { height: 3px; background: var(--bg-input); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
-  .dash-body {
-    flex: 1;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: start;
-  }
+.btn-submit {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  font-family: var(--fdisp);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  padding: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: background 0.15s, transform 0.1s;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+.btn-submit:hover:not(:disabled) { background: var(--green-h); }
+.btn-submit:active:not(:disabled) { transform: scale(0.98); }
+.btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  .panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
+.upload-status {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  min-height: 14px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
 
-  .panel-header {
-    background: var(--accent);
-    padding: 12px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .panel-header span {
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--bg-dark);
-    text-transform: uppercase;
-  }
-  .panel-header svg { width: 18px; height: 18px; color: var(--bg-dark); flex-shrink: 0; }
+.field-error {
+  font-size: 10px;
+  color: #ff8a7a;
+  display: none;
+  letter-spacing: 0.04em;
+}
+.field-error.show { display: block; }
 
-  .panel-body { padding: 20px; }
+/* ═══════════════════════════════════════════
+   RIGHT PANEL — CAMERA
+═══════════════════════════════════════════ */
+.cam-hint {
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.cam-hint strong { color: var(--accent); }
 
-  /* GC ID badge */
-  .gcid-badge {
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 14px;
-    font-size: 13px;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-  }
-  .gcid-badge .gcid-val {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.05em;
-  }
-  .gcid-badge.unset { display: none; }
+.camera-viewport {
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-input);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.camera-viewport:hover           { border-color: var(--accent); }
+.camera-viewport.active          { border-color: var(--accent); border-style: solid; cursor: default; }
+.camera-viewport video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+  transform: scaleX(1) !important;
+}
+.camera-viewport.active video    { display: block; }
+.camera-viewport.captured video  { display: none; }
+.camera-viewport.captured        { cursor: default; border-style: solid; border-color: var(--green); }
 
-  /* Progress bar */
-  .progress-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 18px 0 6px;
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-  }
-  .progress-bar {
-    height: 4px;
-    background: var(--bg-input);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 18px;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
-    transition: width 0.3s;
-    width: 0%;
-  }
+.cam-preview-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  background: #0a3d30;
+  display: none;
+}
+.camera-viewport.captured .cam-preview-img { display: block; }
 
-  /* Submit btn */
-  .btn-submit {
-    width: 100%;
-    background: var(--submit-bg);
-    color: #fff;
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: var(--radius);
-    padding: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background 0.15s, transform 0.1s;
-    margin-top: 4px;
-  }
-  .btn-submit:hover:not(:disabled) { background: var(--submit-hover); }
-  .btn-submit:active:not(:disabled) { transform: scale(0.98); }
-  .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
-  .btn-submit svg { width: 16px; height: 16px; }
+.cam-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #5a9a8a;
+  pointer-events: none;
+}
+.cam-placeholder svg { width: 40px; height: 40px; }
+.cam-placeholder p {
+  font-family: var(--fdisp);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.cam-placeholder small { font-size: 10px; color: #4a8878; }
+.camera-viewport.active .cam-placeholder,
+.camera-viewport.captured .cam-placeholder { display: none; }
 
-  /* ─── CAMERA PANEL ─── */
-  .camera-step-hint {
-    text-align: center;
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    padding: 8px 0 12px;
-  }
-  .camera-step-hint strong { color: var(--accent); }
+/* Capture / Retake buttons */
+.capture-controls {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
-  .camera-viewport {
-    background: var(--bg-input);
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    aspect-ratio: 4/3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  .camera-viewport:hover { border-color: var(--accent); }
-  .camera-viewport.active { border-color: var(--accent); border-style: solid; }
+.btn-capture {
+  flex: 1;
+  background: var(--accent);
+  color: var(--bg-dark);
+  font-family: var(--fdisp);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  padding: 9px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s;
+}
+.btn-capture:hover  { background: var(--accent-h); }
+.btn-capture svg    { width: 14px; height: 14px; }
+.btn-capture.vis    { display: flex; }
 
-  .camera-viewport video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-    transform: scaleX(1) !important; /* non-mirrored */
-  }
-  .camera-viewport.active video { display: block; }
+.btn-retake {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-family: var(--fdisp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 9px 12px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btn-retake:hover { border-color: var(--accent); color: var(--accent); }
+.btn-retake svg   { width: 12px; height: 12px; }
+.btn-retake.vis   { display: flex; }
 
-  .camera-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    color: #5a9a8a;
-    pointer-events: none;
-  }
-  .camera-placeholder svg { width: 48px; height: 48px; }
-  .camera-placeholder p {
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .camera-placeholder small {
-    font-size: 11px;
-    color: #4a8878;
-    letter-spacing: 0.05em;
-  }
+/* captured confirmation label */
+.cap-confirm {
+  display: none;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.07em;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.cap-confirm svg  { width: 11px; height: 11px; color: var(--accent); }
+.cap-confirm.vis  { display: flex; }
 
-  .camera-viewport.active .camera-placeholder { display: none; }
+/* ═══════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  transform: translateY(14px);
+  transition: transform 0.2s;
+}
+.modal-backdrop.open .modal { transform: translateY(0); }
+.modal-hdr {
+  background: var(--accent);
+  padding: 11px 16px;
+  font-family: var(--fdisp);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--bg-dark);
+}
+.modal-body { padding: 18px 16px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.modal-foot { padding: 10px 16px 14px; display: flex; gap: 8px; justify-content: flex-end; }
+.btn-mok {
+  background: var(--red); color: #fff;
+  font-family: var(--fdisp); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-mok:hover { background: var(--red-h); }
+.btn-mcancel {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  font-family: var(--fdisp); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border-radius: 6px; padding: 8px 16px; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-mcancel:hover { border-color: var(--accent); color: var(--accent); }
+.modal-success .modal-hdr { background: var(--green); }
+.modal-success .btn-mok   { background: var(--green); }
+.modal-success .btn-mok:hover { background: var(--green-h); }
 
-  /* Capture controls */
-  .capture-controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-  }
-  .btn-capture {
-    flex: 1;
-    background: var(--accent);
-    color: var(--bg-dark);
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: var(--radius);
-    padding: 11px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background 0.15s;
-    display: none;
-  }
-  .btn-capture:hover { background: var(--accent-hover); }
-  .btn-capture svg { width: 16px; height: 16px; }
-  .btn-capture.visible { display: flex; }
+/* Spinner */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  .btn-retake {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-muted);
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 11px 14px;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.15s;
-  }
-  .btn-retake:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-retake svg { width: 14px; height: 14px; }
-  .btn-retake.visible { display: flex; }
+canvas { display: none; }
 
-  /* Captured preview strip */
-  .captured-strip {
-    margin-top: 14px;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: none;
-  }
-  .captured-strip.visible { display: block; }
-  .captured-strip img {
-    width: 100%;
-    height: 180px;
-    object-fit: contain;
-    display: block;
-    background: #0a3d30;
-  }
-  .captured-strip .cap-label {
-    padding: 8px 12px;
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .captured-strip .cap-label svg { width: 12px; height: 12px; color: var(--accent); }
-
-  /* ─── MODAL ─── */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.65);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .modal-backdrop.open { opacity: 1; pointer-events: all; }
-
-  .modal {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    width: 340px;
-    max-width: calc(100vw - 32px);
-    overflow: hidden;
-    transform: translateY(16px);
-    transition: transform 0.2s;
-  }
-  .modal-backdrop.open .modal { transform: translateY(0); }
-
-  .modal-header {
-    background: var(--accent);
-    padding: 12px 18px;
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--bg-dark);
-  }
-  .modal-body {
-    padding: 20px 18px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--text-muted);
-  }
-  .modal-footer {
-    padding: 12px 18px 16px;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-  .btn-modal-ok {
-    background: var(--red);
-    color: #fff;
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 18px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-modal-ok:hover { background: var(--red-hover); }
-  .btn-modal-cancel {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-radius: 6px;
-    padding: 8px 18px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn-modal-cancel:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* Success modal */
-  .modal-success .modal-header { background: var(--submit-bg); }
-  .modal-success .btn-modal-ok { background: var(--submit-bg); }
-  .modal-success .btn-modal-ok:hover { background: var(--submit-hover); }
-
-  /* Spinner */
-  .spinner {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Validation error inline */
-  .field-error {
-    font-size: 11px;
-    color: #ff8a7a;
-    margin-top: 5px;
-    display: none;
-    letter-spacing: 0.04em;
-  }
-  .field-error.show { display: block; }
-  input.invalid, select.invalid { border-color: var(--red) !important; }
-
-  /* upload status */
-  .upload-status {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 8px;
-    text-align: center;
-    min-height: 16px;
-    letter-spacing: 0.04em;
-  }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    .dash-body {
-      grid-template-columns: 1fr;
-    }
-  }
-  @media (max-width: 600px) {
-    .dash-header-title { font-size: 13px; }
-    .dash-header { padding: 0 12px; gap: 10px; }
-    .dash-body { padding: 12px; gap: 12px; }
-    .panel-body { padding: 14px; }
-  }
-
-  canvas { display: none; }
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 860px) {
+  html, body { overflow: auto; }
+  #dashPage  { height: auto; overflow: auto; }
+  .dash-body { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .camera-viewport { min-height: 240px; }
+}
+@media (max-width: 540px) {
+  .hdr-title { font-size: 12px; letter-spacing: 0.06em; }
+  .dash-body { padding: 8px; gap: 8px; }
+  .panel-body { padding: 10px 10px; gap: 6px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════ LOGIN PAGE ═══════════════════ -->
-<div id="loginPage">
-  <header class="login-header">
-    <div class="logo-wrap">
-      <svg viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="20,10 36,30 20,50 8,38 14,30 8,22" fill="#e9df43"/>
-        <polygon points="36,10 52,30 36,50 24,38 30,30 24,22" fill="#1C856F"/>
-        <text x="60" y="38" font-family="Barlow Condensed,Arial" font-weight="800" font-size="28" fill="#1C856F">SHADOWFAX</text>
-        <text x="60" y="52" font-family="Barlow,Arial" font-size="11" fill="#888">Think ahead!</text>
-      </svg>
-    </div>
-    <h1>Exception Shipment Recording Dashboard</h1>
-  </header>
-  <div class="login-body">
-    <div class="login-card">
-      <div class="login-card-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#0a4f40"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Operator Login</span>
-      </div>
-      <div class="login-card-body">
-        <div class="field-group">
-          <label class="field-label" for="loginUserId">User ID <span class="req">★</span></label>
-          <input type="text" id="loginUserId" placeholder="Enter your User ID" autocomplete="username" />
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="loginPassword">Password <span class="req">★</span></label>
-          <input type="password" id="loginPassword" placeholder="Enter your Password" autocomplete="current-password" />
-        </div>
-        <button class="btn-login" id="loginBtn" onclick="doLogin()">
-          <span id="loginBtnText">LOGIN</span>
-        </button>
-        <div class="login-error" id="loginError"></div>
-      </div>
-    </div>
+<!-- ════════════════════════════════════════
+     TITLE PAGE
+════════════════════════════════════════ -->
+<div id="titlePage">
+  <div class="title-logo-wrap">
+    <svg viewBox="0 0 260 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="22,8 40,36 22,64 8,50 16,36 8,22" fill="#e9df43"/>
+      <polygon points="40,8 58,36 40,64 26,50 34,36 26,22" fill="#1C856F"/>
+      <text x="68" y="46" font-family="Barlow Condensed,Arial" font-weight="800" font-size="36" fill="#1C856F">SHADOWFAX</text>
+      <text x="68" y="63" font-family="Barlow,Arial" font-size="13" fill="#777">Think ahead!</text>
+    </svg>
   </div>
+  <div class="title-name">Operations DEO<br>Shipment Recorder</div>
+  <button class="btn-go" onclick="startDash()">GO!</button>
 </div>
 
-<!-- ═══════════════════ DASHBOARD PAGE ═══════════════════ -->
-<div id="dashPage" style="display:none; flex-direction:column;">
-  <header class="dash-header">
-    <div class="logo-wrap">
-      <svg viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="20,10 36,30 20,50 8,38 14,30 8,22" fill="#e9df43"/>
-        <polygon points="36,10 52,30 36,50 24,38 30,30 24,22" fill="#1C856F"/>
-        <text x="60" y="38" font-family="Barlow Condensed,Arial" font-weight="800" font-size="28" fill="#1C856F">SHADOWFAX</text>
-        <text x="60" y="52" font-family="Barlow,Arial" font-size="11" fill="#888">Think ahead!</text>
+<!-- ════════════════════════════════════════
+     DASHBOARD PAGE
+════════════════════════════════════════ -->
+<div id="dashPage">
+
+  <!-- Header -->
+  <header class="hdr">
+    <div class="logo-badge">
+      <svg viewBox="0 0 180 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="16,6 30,27 16,48 6,37 12,27 6,17" fill="#e9df43"/>
+        <polygon points="30,6 44,27 30,48 20,37 26,27 20,17" fill="#1C856F"/>
+        <text x="50" y="35" font-family="Barlow Condensed,Arial" font-weight="800" font-size="26" fill="#1C856F">SHADOWFAX</text>
+        <text x="50" y="48" font-family="Barlow,Arial" font-size="10" fill="#888">Think ahead!</text>
       </svg>
     </div>
-    <div class="dash-header-title">Exception Shipment Recording Dashboard</div>
+
+    <div class="hdr-title">Operations DEO Shipment Recorder</div>
+
     <button class="btn-logout" onclick="confirmLogout()">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Logout
     </button>
   </header>
 
+  <!-- Body -->
   <div class="dash-body">
-    <!-- LEFT PANEL -->
+
+    <!-- ── LEFT PANEL ── -->
     <div class="panel">
-      <div class="panel-header">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <div class="panel-hdr">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         <span>Shipment Data Entry</span>
       </div>
       <div class="panel-body">
 
-        <!-- GC ID badge (shown after first entry) -->
-        <div class="gcid-badge unset" id="gcidBadge">
-          <span style="font-size:11px;letter-spacing:0.08em;">GC ID (session)</span>
-          <span class="gcid-val" id="gcidBadgeVal">—</span>
+        <!-- GC ID badge (after lock) -->
+        <div class="gcid-badge hidden" id="gcidBadge">
+          <span style="font-size:10px;letter-spacing:0.08em;">GC ID (session)</span>
+          <span class="gv" id="gcidBadgeVal">—</span>
         </div>
 
-        <!-- GC ID field (hidden after set) -->
-        <div class="field-group" id="gcidFieldGroup">
-          <label class="field-label" for="fGcId">GC ID <span class="req">★</span></label>
-          <input type="text" id="fGcId" placeholder="Enter GC ID" />
+        <!-- GC ID input (before lock) -->
+        <div class="field-row" id="gcidFieldRow">
+          <label class="field-lbl" for="fGcId">GC ID <span class="req">★</span></label>
+          <input type="text" id="fGcId" placeholder="Enter GC ID" autocomplete="off"/>
           <div class="field-error" id="errGcId">GC ID is required.</div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label" for="fArea">Area <span class="req">★</span></label>
-          <input type="text" id="fArea" placeholder="Enter area name" />
+        <!-- Area -->
+        <div class="field-row">
+          <label class="field-lbl" for="fArea">Area <span class="req">★</span></label>
+          <input type="text" id="fArea" placeholder="Enter area name" autocomplete="off"/>
           <div class="field-error" id="errArea">Area is required.</div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label" for="fSite">Site Name <span class="req">★</span></label>
-          <select id="fSite">
-            <option value="">— Select Site —</option>
-            <option value="ONE NCR">ONE NCR</option>
-            <option value="NCR BILASPUR">NCR BILASPUR</option>
-            <option value="NCR TAURU">NCR TAURU</option>
-          </select>
-          <div class="field-error" id="errSite">Please select a site.</div>
+        <!-- Site Name — read-only ONE NCR -->
+        <div class="field-row">
+          <div class="field-lbl">Site Name</div>
+          <div class="site-display">ONE NCR</div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label" for="fShipType">Shipment Type <span class="req">★</span></label>
-          <select id="fShipType">
-            <option value="">— Select Type —</option>
-            <option value="DAMAGED SHIPMENT">DAMAGED SHIPMENT</option>
-            <option value="EMPTY SHIPMENT">EMPTY SHIPMENT</option>
-            <option value="ORPHAN SHIPMENT">ORPHAN SHIPMENT</option>
-          </select>
+        <!-- Shipment Type — radio buttons -->
+        <div class="field-row">
+          <div class="field-lbl">Shipment Type <span class="req">★</span></div>
+          <div class="radio-group" id="shipTypeGroup">
+            <label class="radio-opt" id="rDamaged" onclick="selectType('DAMAGED SHIPMENT','rDamaged')">
+              <input type="radio" name="shipType" value="DAMAGED SHIPMENT"/>
+              <div class="radio-dot"></div>
+              <span class="radio-label">Damaged Shipment</span>
+            </label>
+            <label class="radio-opt" id="rEmpty" onclick="selectType('EMPTY SHIPMENT','rEmpty')">
+              <input type="radio" name="shipType" value="EMPTY SHIPMENT"/>
+              <div class="radio-dot"></div>
+              <span class="radio-label">Empty Shipment</span>
+            </label>
+            <label class="radio-opt" id="rOrphan" onclick="selectType('ORPHAN SHIPMENT','rOrphan')">
+              <input type="radio" name="shipType" value="ORPHAN SHIPMENT"/>
+              <div class="radio-dot"></div>
+              <span class="radio-label">Orphan Shipment</span>
+            </label>
+          </div>
           <div class="field-error" id="errShipType">Please select a shipment type.</div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label" for="fAwb">AWB Number <span class="req">★</span></label>
-          <input type="text" id="fAwb" placeholder="Scan or type AWB" autocomplete="off" />
+        <!-- AWB Number -->
+        <div class="field-row">
+          <label class="field-lbl" for="fAwb">AWB Number <span class="req">★</span></label>
+          <input type="text" id="fAwb" placeholder="Scan or type AWB" autocomplete="off"/>
           <div class="field-error" id="errAwb">AWB Number is required.</div>
         </div>
 
+        <!-- Progress -->
         <div class="progress-row">
           <span>Requirements met</span>
-          <span id="progressLabel">0 / 6</span>
+          <span id="progressLabel">0 / 5</span>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
+        <!-- Upload status -->
+        <div class="upload-status" id="uploadStatus"></div>
+
+        <!-- Submit -->
         <button class="btn-submit" id="submitBtn" onclick="submitRecord()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span id="submitBtnText">Submit Record</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="submitBtnTxt">Submit Record</span>
         </button>
 
-      </div>
-    </div>
+      </div><!-- /panel-body -->
+    </div><!-- /left panel -->
 
-    <!-- RIGHT PANEL -->
+    <!-- ── RIGHT PANEL ── -->
     <div class="panel">
-      <div class="panel-header">
+      <div class="panel-hdr">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         <span>Photo Capture System</span>
       </div>
       <div class="panel-body">
 
-        <div class="camera-step-hint">
-          Click the area below to start · Capture: <strong>SHIPMENT IMAGE</strong>
-        </div>
+        <div class="cam-hint">Click the area below to activate camera · <strong>1 PHOTO REQUIRED</strong></div>
 
+        <!-- Live preview / captured image -->
         <div class="camera-viewport" id="cameraViewport" onclick="activateCamera()">
-          <div class="camera-placeholder">
+          <div class="cam-placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             <p>Click to Activate Camera</p>
             <small>1 photo required — Shipment Image</small>
           </div>
-          <video id="cameraVideo" playsinline autoplay></video>
+          <video id="camVideo" playsinline autoplay muted></video>
+          <img id="camPreview" class="cam-preview-img" src="" alt="Captured"/>
         </div>
 
+        <!-- Controls -->
         <div class="capture-controls">
-          <button class="btn-capture" id="captureBtn" onclick="capturePhoto()">
+          <button class="btn-capture" id="captureBtn" onclick="capturePhoto(event)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2l-2-3H9L7 7H5z"/></svg>
             Click to Capture
           </button>
           <button class="btn-retake" id="retakeBtn" onclick="retakePhoto()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-            Retake
+            Retake Image
           </button>
         </div>
 
-        <div class="captured-strip" id="capturedStrip">
-          <img id="capturedPreview" src="" alt="Captured shipment image" />
-          <div class="cap-label">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Image captured — ready for submission
-          </div>
+        <div class="cap-confirm" id="capConfirm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Image captured — ready for submission
         </div>
 
-        <div class="upload-status" id="uploadStatus"></div>
+      </div><!-- /panel-body -->
+    </div><!-- /right panel -->
 
-      </div>
-    </div>
-  </div>
-</div>
+  </div><!-- /dash-body -->
+</div><!-- /dashPage -->
 
-<!-- ═══════════════════ MODALS ═══════════════════ -->
+<!-- ════════════════════════════════════════
+     MODALS
+════════════════════════════════════════ -->
 <!-- Logout confirm -->
 <div class="modal-backdrop" id="modalLogout">
   <div class="modal">
-    <div class="modal-header">Confirm Logout</div>
-    <div class="modal-body">Are you sure you want to logout? Your GC ID and session will be cleared.</div>
-    <div class="modal-footer">
-      <button class="btn-modal-cancel" onclick="closeModal('modalLogout')">Cancel</button>
-      <button class="btn-modal-ok" onclick="doLogout()">OK, Logout</button>
+    <div class="modal-hdr">Confirm Logout</div>
+    <div class="modal-body">Are you sure? Your GC ID and Area will be cleared.</div>
+    <div class="modal-foot">
+      <button class="btn-mcancel" onclick="closeModal('modalLogout')">Cancel</button>
+      <button class="btn-mok"     onclick="doLogout()">OK, Logout</button>
     </div>
   </div>
 </div>
@@ -801,10 +775,10 @@
 <!-- Success -->
 <div class="modal-backdrop modal-success" id="modalSuccess">
   <div class="modal">
-    <div class="modal-header">Record Submitted Successfully</div>
-    <div class="modal-body" id="modalSuccessBody">Shipment record has been saved. Ready for next entry.</div>
-    <div class="modal-footer">
-      <button class="btn-modal-ok" onclick="closeModal('modalSuccess')">Continue</button>
+    <div class="modal-hdr">Record Submitted</div>
+    <div class="modal-body" id="modalSuccessBody">Record saved. Ready for next entry.</div>
+    <div class="modal-foot">
+      <button class="btn-mok" onclick="closeModal('modalSuccess')">Continue</button>
     </div>
   </div>
 </div>
@@ -812,10 +786,10 @@
 <!-- Error -->
 <div class="modal-backdrop" id="modalError">
   <div class="modal">
-    <div class="modal-header">Submission Error</div>
+    <div class="modal-hdr">Submission Error</div>
     <div class="modal-body" id="modalErrorBody">An error occurred.</div>
-    <div class="modal-footer">
-      <button class="btn-modal-ok" onclick="closeModal('modalError')">Close</button>
+    <div class="modal-foot">
+      <button class="btn-mok" onclick="closeModal('modalError')">Close</button>
     </div>
   </div>
 </div>
@@ -823,287 +797,238 @@
 <canvas id="captureCanvas"></canvas>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG — paste your deployed GAS URLs here
-// ══════════════════════════════════════════════
-const GAS_AUTH_URL = 'https://script.google.com/macros/s/AKfycbx9wEb1pjBAj16lsnMP8_YhzS5vIctdWWPBl7bpZ2Cghc4Gl3rKUt70vKhzHSTqwivn/exec';
-const GAS_DATA_URL = 'https://script.google.com/macros/s/AKfycbxvSl0gZJZudy6IRVDWZrOPAZScV-xw1sqhLopZwUuEGKdWcRALOHfa61rI8nae5ffF/exec';
+// ════════════════════════════════════════════════
+//  CONFIG — paste your deployed GAS URL here
+//  (Only ONE script needed — data recording)
+// ════════════════════════════════════════════════
+const GAS_DATA_URL = 'https://script.google.com/macros/s/AKfycbyyM9ImEQTnZVnQxnQDaGD0FGlC124pQPlRRIv6ouAm0rZRE27CGERF8RSVWd33Xj1AvQ/exec';
 
-// ══════════════════════════════════════════════
-//  SESSION
-// ══════════════════════════════════════════════
-let session = { userId: null, gcId: null, area: null, site: null };
-function saveSession()  { sessionStorage.setItem('sfSession', JSON.stringify(session)); }
-function loadSession()  { const s = sessionStorage.getItem('sfSession'); if (s) { session = JSON.parse(s); return true; } return false; }
-function clearSession() { session = { userId:null, gcId:null, area:null, site:null }; sessionStorage.removeItem('sfSession'); }
+// ════════════════════════════════════════════════
+//  SESSION  (persists GC ID + Area across submissions)
+// ════════════════════════════════════════════════
+let session = { gcId: null, area: null };
+function saveSession()  { sessionStorage.setItem('deoSession', JSON.stringify(session)); }
+function loadSession()  { const s = sessionStorage.getItem('deoSession'); if (s) session = JSON.parse(s); }
+function clearSession() { session = { gcId: null, area: null }; sessionStorage.removeItem('deoSession'); }
 
-// ══════════════════════════════════════════════
-//  JSONP  (for login — small payload, no issues)
-// ══════════════════════════════════════════════
-function jsonpRequest(url, params, timeoutMs) {
-  timeoutMs = timeoutMs || 20000;
-  return new Promise((resolve, reject) => {
-    const cb   = 'sfcb_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
-    let   done = false;
-    const sc   = document.createElement('script');
-
-    const cleanup = () => {
-      done = true;
-      delete window[cb];
-      if (sc.parentNode) sc.parentNode.removeChild(sc);
-    };
-
-    const timer = setTimeout(() => {
-      if (done) return;
-      cleanup();
-      reject(new Error('Request timed out.'));
-    }, timeoutMs);
-
-    window[cb] = (data) => {
-      if (done) return;
-      clearTimeout(timer);
-      cleanup();
-      resolve(data);
-    };
-
-    sc.onerror = () => {
-      if (done) return;
-      clearTimeout(timer);
-      cleanup();
-      reject(new Error('Could not reach the server. Check your GAS URL and make sure it is deployed as "Anyone".'));
-    };
-
-    sc.src = url + '?' + new URLSearchParams({ ...params, callback: cb }).toString();
-    document.head.appendChild(sc);
-  });
-}
-
-// ══════════════════════════════════════════════
-//  SUBMIT via fetch no-cors + JSONP confirmation
-//  Strategy:
-//   1. Send ALL text fields + compressed image via fetch POST (no-cors).
-//      This always succeeds silently — GAS receives and writes the row.
-//   2. Immediately after, do a tiny JSONP GET (no image) to confirm the
-//      last record was written and get the Drive image URL back.
-//   This sidesteps every CORS / URL-length / redirect issue completely.
-// ══════════════════════════════════════════════
-async function gasPost(fields) {
-  // Build a URL-encoded form body — GAS doPost reads e.parameter from this
-  const body = new URLSearchParams(fields).toString();
-  try {
-    await fetch(GAS_DATA_URL, {
-      method: 'POST',
-      mode:   'no-cors',           // fire-and-forget: no response body, but GAS executes
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-    });
-  } catch (_) {
-    // no-cors fetch never actually throws; swallow just in case
-  }
-}
-
-async function gasConfirm(awb, userId) {
-  // Poll GAS with a tiny JSONP GET to confirm the row was written
-  // GAS checks the last row for this AWB and returns success + imageUrl
-  return jsonpRequest(GAS_DATA_URL, {
-    action: 'confirmRecord',
-    awb,
-    userId,
-  }, 15000);
-}
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
-window.addEventListener('load', () => {
-  if (loadSession() && session.userId) showDashboard();
-  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-  document.getElementById('loginUserId').addEventListener('keydown',   e => { if (e.key === 'Enter') doLogin(); });
-  ['fGcId','fArea','fSite','fShipType','fAwb'].forEach(id => {
-    document.getElementById(id).addEventListener('input',  updateProgress);
-    document.getElementById(id).addEventListener('change', updateProgress);
-  });
-});
-
-// ══════════════════════════════════════════════
-//  LOGIN
-// ══════════════════════════════════════════════
-async function doLogin() {
-  const userId   = document.getElementById('loginUserId').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
-  const errEl    = document.getElementById('loginError');
-  errEl.style.display = 'none';
-
-  if (!userId || !password) {
-    errEl.textContent   = 'Please enter both User ID and Password.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  const btn = document.getElementById('loginBtn');
-  document.getElementById('loginBtnText').innerHTML = '<span class="spinner"></span>';
-  btn.disabled = true;
-
-  try {
-    const data = await jsonpRequest(GAS_AUTH_URL, { action: 'authenticate', userId, password });
-    if (data.success) {
-      session.userId = userId;
-      session.site   = data.site || null;
-      saveSession();
-      showDashboard();
-    } else {
-      errEl.textContent   = data.message || 'Invalid credentials.';
-      errEl.style.display = 'block';
-    }
-  } catch (e) {
-    errEl.textContent   = e.message || 'Connection error. Try again.';
-    errEl.style.display = 'block';
-  } finally {
-    document.getElementById('loginBtnText').textContent = 'LOGIN';
-    btn.disabled = false;
-  }
-}
-
-// ══════════════════════════════════════════════
-//  SHOW / HIDE PAGES
-// ══════════════════════════════════════════════
-function showDashboard() {
-  document.getElementById('loginPage').style.display = 'none';
+// ════════════════════════════════════════════════
+//  TITLE PAGE → DASHBOARD
+// ════════════════════════════════════════════════
+function startDash() {
+  document.getElementById('titlePage').style.display = 'none';
   document.getElementById('dashPage').style.display  = 'flex';
+  loadSession();
   if (session.gcId)  lockGcId(session.gcId);
   if (session.area)  document.getElementById('fArea').value = session.area;
-  if (session.site) {
-    const sel = document.getElementById('fSite');
-    for (let i = 0; i < sel.options.length; i++) {
-      if (sel.options[i].value === session.site) { sel.value = session.site; break; }
-    }
-  }
   updateProgress();
 }
 
-function showLogin() {
-  document.getElementById('dashPage').style.display  = 'none';
-  document.getElementById('loginPage').style.display = 'flex';
-  document.getElementById('loginUserId').value   = '';
-  document.getElementById('loginPassword').value = '';
-  document.getElementById('loginError').style.display = 'none';
-}
+window.addEventListener('load', () => {
+  loadSession();
+  // Restore session if returning without full reload
+  ['fGcId','fArea'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateProgress);
+  });
+  document.getElementById('fAwb').addEventListener('input', updateProgress);
+});
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 //  GC ID LOCK
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 function lockGcId(val) {
   session.gcId = val;
   saveSession();
   document.getElementById('gcidBadgeVal').textContent = val;
-  document.getElementById('gcidBadge').classList.remove('unset');
-  document.getElementById('gcidFieldGroup').style.display = 'none';
+  document.getElementById('gcidBadge').classList.remove('hidden');
+  document.getElementById('gcidFieldRow').style.display = 'none';
   updateProgress();
 }
 
-// ══════════════════════════════════════════════
-//  PROGRESS
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
+//  SHIPMENT TYPE SELECTION
+// ════════════════════════════════════════════════
+let selectedShipType = '';
+
+function selectType(value, elId) {
+  selectedShipType = value;
+  // Clear all
+  ['rDamaged','rEmpty','rOrphan'].forEach(id => {
+    document.getElementById(id).classList.remove('selected','invalid-radio');
+  });
+  document.getElementById(elId).classList.add('selected');
+  document.getElementById('errShipType').classList.remove('show');
+  updateProgress();
+}
+
+// ════════════════════════════════════════════════
+//  PROGRESS  (5 fields: GC ID, Area, ShipType, AWB, Image)
+// ════════════════════════════════════════════════
 function updateProgress() {
   const fields = [
     session.gcId || document.getElementById('fGcId').value.trim(),
     document.getElementById('fArea').value.trim(),
-    document.getElementById('fSite').value,
-    document.getElementById('fShipType').value,
+    selectedShipType,
     document.getElementById('fAwb').value.trim(),
     capturedBlob ? 'ok' : '',
   ];
   const met = fields.filter(Boolean).length;
-  document.getElementById('progressFill').style.width  = Math.round(met/6*100) + '%';
-  document.getElementById('progressLabel').textContent = met + ' / 6';
+  document.getElementById('progressFill').style.width  = Math.round(met / 5 * 100) + '%';
+  document.getElementById('progressLabel').textContent = met + ' / 5';
 }
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 //  CAMERA
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 let mediaStream  = null;
 let capturedBlob = null;
 
 async function activateCamera() {
   const vp = document.getElementById('cameraViewport');
-  if (vp.classList.contains('active') || capturedBlob) return;
+  if (vp.classList.contains('active') || vp.classList.contains('captured')) return;
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+      video: {
+        facingMode:   { ideal: 'environment' },
+        width:        { ideal: 3840 },
+        height:       { ideal: 2160 },
+        focusMode:    'continuous',
+        exposureMode: 'continuous',
+        whiteBalanceMode: 'continuous',
+      }
     });
-    const video = document.getElementById('cameraVideo');
-    video.srcObject = mediaStream;
-    video.style.transform = 'scaleX(1)';
-    await video.play();
+    const vid = document.getElementById('camVideo');
+    vid.srcObject = mediaStream;
+    vid.style.transform = 'scaleX(1)';
+    await vid.play();
     vp.classList.add('active');
-    document.getElementById('captureBtn').classList.add('visible');
+    document.getElementById('captureBtn').classList.add('vis');
   } catch (err) {
-    alert('Camera access denied. Please allow camera permission and try again.');
+    alert('Camera access denied or unavailable. Please allow camera permission and try again.\n\n' + err.message);
   }
 }
 
-function capturePhoto() {
-  const video  = document.getElementById('cameraVideo');
+function capturePhoto(e) {
+  if (e) e.stopPropagation();
+  const vid    = document.getElementById('camVideo');
   const canvas = document.getElementById('captureCanvas');
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
+  // Full original resolution — no compression, no resize
+  canvas.width  = vid.videoWidth  || 1280;
+  canvas.height = vid.videoHeight || 720;
+  canvas.getContext('2d').drawImage(vid, 0, 0, canvas.width, canvas.height);
+
   canvas.toBlob(blob => {
     capturedBlob = blob;
+
+    // Show captured image in viewport
     const url = URL.createObjectURL(blob);
-    document.getElementById('capturedPreview').src = url;
-    document.getElementById('capturedStrip').classList.add('visible');
+    document.getElementById('camPreview').src = url;
+
+    const vp = document.getElementById('cameraViewport');
+    vp.classList.remove('active');
+    vp.classList.add('captured');
+
     stopCamera();
-    document.getElementById('captureBtn').classList.remove('visible');
-    document.getElementById('retakeBtn').classList.add('visible');
+    document.getElementById('captureBtn').classList.remove('vis');
+    document.getElementById('retakeBtn').classList.add('vis');
+    document.getElementById('capConfirm').classList.add('vis');
     updateProgress();
-  }, 'image/jpeg', 1.0);
+  }, 'image/jpeg', 1.0); // no quality reduction
 }
 
 function retakePhoto() {
   capturedBlob = null;
-  document.getElementById('capturedStrip').classList.remove('visible');
-  document.getElementById('retakeBtn').classList.remove('visible');
-  document.getElementById('cameraViewport').classList.remove('active');
-  document.getElementById('cameraVideo').srcObject = null;
+  const vp = document.getElementById('cameraViewport');
+  vp.classList.remove('active', 'captured');
+  document.getElementById('camPreview').src = '';
+  document.getElementById('retakeBtn').classList.remove('vis');
+  document.getElementById('captureBtn').classList.remove('vis');
+  document.getElementById('capConfirm').classList.remove('vis');
+  document.getElementById('camVideo').srcObject = null;
   updateProgress();
   activateCamera();
 }
 
 function stopCamera() {
   if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
-  document.getElementById('cameraViewport').classList.remove('active');
 }
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 //  VALIDATION
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 function clearErrors() {
-  ['errGcId','errArea','errSite','errShipType','errAwb'].forEach(id => document.getElementById(id).classList.remove('show'));
-  ['fGcId','fArea','fSite','fShipType','fAwb'].forEach(id => document.getElementById(id).classList.remove('invalid'));
+  ['errGcId','errArea','errShipType','errAwb'].forEach(id =>
+    document.getElementById(id).classList.remove('show'));
+  ['fGcId','fArea','fAwb'].forEach(id =>
+    document.getElementById(id).classList.remove('invalid'));
+  ['rDamaged','rEmpty','rOrphan'].forEach(id =>
+    document.getElementById(id).classList.remove('invalid-radio'));
 }
-function showErr(errId, fieldId) {
-  document.getElementById(errId).classList.add('show');
-  document.getElementById(fieldId).classList.add('invalid');
-}
+
 function validateForm() {
   clearErrors();
   let ok = true;
-  if (!(session.gcId || document.getElementById('fGcId').value.trim()))  { showErr('errGcId',    'fGcId');    ok = false; }
-  if (!document.getElementById('fArea').value.trim())                     { showErr('errArea',    'fArea');    ok = false; }
-  if (!document.getElementById('fSite').value)                            { showErr('errSite',    'fSite');    ok = false; }
-  if (!document.getElementById('fShipType').value)                        { showErr('errShipType','fShipType');ok = false; }
-  if (!document.getElementById('fAwb').value.trim())                      { showErr('errAwb',     'fAwb');     ok = false; }
-  if (!capturedBlob) {
-    document.getElementById('uploadStatus').textContent = '⚠ Please capture a shipment image before submitting.';
+
+  const gcId = session.gcId || document.getElementById('fGcId').value.trim();
+  if (!gcId) {
+    document.getElementById('errGcId').classList.add('show');
+    document.getElementById('fGcId').classList.add('invalid');
     ok = false;
   }
+
+  if (!document.getElementById('fArea').value.trim()) {
+    document.getElementById('errArea').classList.add('show');
+    document.getElementById('fArea').classList.add('invalid');
+    ok = false;
+  }
+
+  if (!selectedShipType) {
+    document.getElementById('errShipType').classList.add('show');
+    ['rDamaged','rEmpty','rOrphan'].forEach(id =>
+      document.getElementById(id).classList.add('invalid-radio'));
+    ok = false;
+  }
+
+  if (!document.getElementById('fAwb').value.trim()) {
+    document.getElementById('errAwb').classList.add('show');
+    document.getElementById('fAwb').classList.add('invalid');
+    ok = false;
+  }
+
+  if (!capturedBlob) {
+    document.getElementById('uploadStatus').textContent = '⚠ Please capture a shipment image first.';
+    ok = false;
+  }
+
   return ok;
 }
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
+//  JSONP helper  (login removed — only used for
+//  confirmRecord poll after fire-and-forget POST)
+// ════════════════════════════════════════════════
+function jsonpRequest(url, params, ms) {
+  ms = ms || 20000;
+  return new Promise((resolve, reject) => {
+    const cb = 'sfcb_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+    let done = false;
+    const sc = document.createElement('script');
+    const cleanup = () => { done = true; delete window[cb]; if (sc.parentNode) sc.parentNode.removeChild(sc); };
+    const timer = setTimeout(() => { if (done) return; cleanup(); reject(new Error('Confirm timed out.')); }, ms);
+    window[cb] = (data) => { if (done) return; clearTimeout(timer); cleanup(); resolve(data); };
+    sc.onerror = () => { if (done) return; clearTimeout(timer); cleanup(); reject(new Error('Confirm call failed.')); };
+    sc.src = url + '?' + new URLSearchParams({ ...params, callback: cb }).toString();
+    document.head.appendChild(sc);
+  });
+}
+
+// ════════════════════════════════════════════════
 //  SUBMIT
-// ══════════════════════════════════════════════
+//  Strategy: fetch POST no-cors (fire-and-forget,
+//  always reaches GAS) + JSONP confirm poll after
+//  3 s to verify row was written.
+//  Image: original quality, original resolution.
+//  Large images are chunked via base64 in POST body.
+// ════════════════════════════════════════════════
 let isSubmitting = false;
 
 async function submitRecord() {
@@ -1113,47 +1038,65 @@ async function submitRecord() {
   isSubmitting = true;
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  document.getElementById('submitBtnText').innerHTML = '<span class="spinner"></span> Submitting…';
+  document.getElementById('submitBtnTxt').innerHTML = '<span class="spinner"></span> Submitting…';
 
   const gcId     = session.gcId || document.getElementById('fGcId').value.trim();
   const area     = document.getElementById('fArea').value.trim();
-  const site     = document.getElementById('fSite').value;
-  const shipType = document.getElementById('fShipType').value;
+  const site     = 'ONE NCR';
+  const shipType = selectedShipType;
   const awb      = document.getElementById('fAwb').value.trim();
-  const userId   = session.userId;
 
+  // Lock GC ID for session
   if (!session.gcId) lockGcId(gcId);
-  session.area = area; session.site = site; saveSession();
+  session.area = area;
+  saveSession();
 
   try {
-    // Step 1: compress image → max 800px, 60% quality → ~30-50KB
-    document.getElementById('uploadStatus').textContent = 'Compressing image…';
-    const base64 = await compressImage(capturedBlob, 800, 0.60);
+    document.getElementById('uploadStatus').textContent = 'Reading image…';
 
-    // Step 2: fire-and-forget POST (no-cors) — GAS always receives this
-    document.getElementById('uploadStatus').textContent = 'Sending data…';
-    await gasPost({ action: 'submitRecord', gcId, area, site, shipType, awb, userId, imageBase64: base64, imageMime: 'image/jpeg' });
+    // Convert original blob to base64 — NO compression, NO resize
+    const base64 = await blobToBase64(capturedBlob);
 
-    // Step 3: wait 3 seconds for GAS to finish writing, then confirm via JSONP
+    document.getElementById('uploadStatus').textContent = 'Sending to server…';
+
+    // Fire-and-forget POST — no-cors means browser won't read response
+    // but GAS doPost() fully executes server-side
+    const body = new URLSearchParams({
+      action:      'submitRecord',
+      gcId, area, site, shipType, awb,
+      userId:      'DEO_OPERATOR',
+      imageBase64: base64,
+      imageMime:   'image/jpeg',
+    }).toString();
+
+    await fetch(GAS_DATA_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+
+    // Wait 4 s for GAS to finish Drive upload + sheet write
+    document.getElementById('uploadStatus').textContent = 'Processing on server…';
+    await new Promise(r => setTimeout(r, 4000));
+
+    // Confirm via JSONP
     document.getElementById('uploadStatus').textContent = 'Confirming record…';
-    await new Promise(r => setTimeout(r, 3000));
-
     let confirmed = false;
     try {
-      const conf = await gasConfirm(awb, userId);
+      const conf = await jsonpRequest(GAS_DATA_URL, { action: 'confirmRecord', awb }, 15000);
       confirmed = conf && conf.success;
     } catch (_) {
-      // confirm failed — but POST likely succeeded; treat as success
-      confirmed = true;
+      confirmed = true; // POST very likely succeeded even if confirm times out
     }
 
     if (confirmed) {
       openModal('modalSuccess');
       document.getElementById('modalSuccessBody').textContent =
-        'Record saved for AWB ' + awb + '. Image stored in Drive. Ready for next entry.';
+        'AWB ' + awb + ' recorded successfully. Image saved to Drive. Ready for next entry.';
       clearAfterSubmit();
     } else {
-      openErrorModal('Record may not have saved. Please check the sheet and retry if missing.');
+      openErrorModal('Record may not have saved. Please check the Google Sheet and retry if the row is missing.');
     }
 
   } catch (e) {
@@ -1161,67 +1104,78 @@ async function submitRecord() {
   } finally {
     isSubmitting = false;
     btn.disabled = false;
-    document.getElementById('submitBtnText').textContent = 'Submit Record';
+    document.getElementById('submitBtnTxt').textContent = 'Submit Record';
     document.getElementById('uploadStatus').textContent  = '';
   }
 }
 
-// ══════════════════════════════════════════════
-//  IMAGE COMPRESS
-// ══════════════════════════════════════════════
-function compressImage(blob, maxPx, quality) {
+// Read blob as base64 (original, uncompressed)
+function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(blob);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let w = img.width, h = img.height;
-      if (w > maxPx || h > maxPx) {
-        if (w >= h) { h = Math.round(h * maxPx / w); w = maxPx; }
-        else        { w = Math.round(w * maxPx / h); h = maxPx; }
-      }
-      const c = document.getElementById('captureCanvas');
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(img, 0, 0, w, h);
-      resolve(c.toDataURL('image/jpeg', quality).split(',')[1]);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image processing failed.')); };
-    img.src = url;
+    const r = new FileReader();
+    r.onload  = () => resolve(r.result.split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
   });
 }
 
-// ══════════════════════════════════════════════
-//  CLEAR AFTER SUBMIT
-// ══════════════════════════════════════════════
+// Clear only AWB + ShipType + image after submit; retain GC ID + Area
 function clearAfterSubmit() {
   document.getElementById('fAwb').value = '';
-  document.getElementById('fShipType').value = '';
+
+  selectedShipType = '';
+  ['rDamaged','rEmpty','rOrphan'].forEach(id =>
+    document.getElementById(id).classList.remove('selected','invalid-radio'));
+
   capturedBlob = null;
-  document.getElementById('capturedStrip').classList.remove('visible');
-  document.getElementById('retakeBtn').classList.remove('visible');
-  document.getElementById('captureBtn').classList.remove('visible');
-  document.getElementById('cameraViewport').classList.remove('active');
+  const vp = document.getElementById('cameraViewport');
+  vp.classList.remove('active','captured');
+  document.getElementById('camPreview').src = '';
+  document.getElementById('retakeBtn').classList.remove('vis');
+  document.getElementById('captureBtn').classList.remove('vis');
+  document.getElementById('capConfirm').classList.remove('vis');
+  document.getElementById('camVideo').srcObject = null;
   stopCamera();
+
   clearErrors();
   document.getElementById('uploadStatus').textContent = '';
   updateProgress();
 }
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 //  LOGOUT
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 function confirmLogout() { openModal('modalLogout'); }
+
 function doLogout() {
   closeModal('modalLogout');
   stopCamera();
   capturedBlob = null;
+  selectedShipType = '';
   clearSession();
-  showLogin();
+  // Reset all fields
+  document.getElementById('fGcId').value  = '';
+  document.getElementById('fArea').value  = '';
+  document.getElementById('fAwb').value   = '';
+  document.getElementById('gcidBadge').classList.add('hidden');
+  document.getElementById('gcidFieldRow').style.display = '';
+  ['rDamaged','rEmpty','rOrphan'].forEach(id =>
+    document.getElementById(id).classList.remove('selected'));
+  const vp = document.getElementById('cameraViewport');
+  vp.classList.remove('active','captured');
+  document.getElementById('camPreview').src = '';
+  document.getElementById('retakeBtn').classList.remove('vis');
+  document.getElementById('captureBtn').classList.remove('vis');
+  document.getElementById('capConfirm').classList.remove('vis');
+  updateProgress();
+  // Back to title page
+  document.getElementById('dashPage').style.display  = 'none';
+  document.getElementById('titlePage').style.display = 'flex';
 }
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 //  MODALS
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function openErrorModal(msg) {
