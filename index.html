@@ -980,10 +980,10 @@ canvas { display: none; }
   </div>
   <div class="title-name">Operations DEO<br>Shipment Recorder</div>
   <div class="title-btns">
-    <button class="btn-title-nav btn-data-record" onclick="startDash()">
+    <button class="btn-title-nav btn-data-record" onclick="goToRecord()">
       &#x1F4DD; Data Record
     </button>
-    <button class="btn-title-nav btn-data-view" onclick="startDataView()">
+    <button class="btn-title-nav btn-data-view" onclick="goToView()">
       &#x1F4CA; Data View
     </button>
   </div>
@@ -1321,11 +1321,7 @@ function clearSession() { session = { gcId: null, area: null }; sessionStorage.r
 //  TITLE PAGE → DASHBOARD
 // ════════════════════════════════════════════════
 function startDash() {
-  showPage('dashPage');
-  loadSession();
-  if (session.gcId)  lockGcId(session.gcId);
-  if (session.area)  document.getElementById('fArea').value = session.area;
-  updateProgress();
+  goToRecord();
 }
 
 window.addEventListener('load', () => {
@@ -1676,7 +1672,16 @@ function doLogout() {
   document.getElementById('capConfirm').classList.remove('vis');
   updateProgress();
   // Back to title page
-  showPage('titlePage');
+  var tp = document.getElementById('titlePage');
+  var dp = document.getElementById('dashPage');
+  var dv = document.getElementById('dataViewPage');
+  dp.style.display = 'none';
+  dv.style.display = 'none';
+  tp.style.display = 'flex';
+  tp.style.flexDirection = 'column';
+  tp.style.alignItems = 'center';
+  tp.style.justifyContent = 'center';
+  tp.style.height = '100vh';
 }
 
 // ════════════════════════════════════════════════
@@ -1695,28 +1700,71 @@ document.querySelectorAll('.modal-backdrop').forEach(el => {
 // ════════════════════════════════════════════════
 //  PAGE NAVIGATION HELPERS
 // ════════════════════════════════════════════════
+
+// Self-contained button handlers — zero dependencies, cannot fail silently
+function goToRecord() {
+  var tp = document.getElementById('titlePage');
+  var dp = document.getElementById('dashPage');
+  var dv = document.getElementById('dataViewPage');
+  tp.style.display = 'none';
+  dv.style.display = 'none';
+  dp.style.removeProperty('display');
+  dp.style.display = 'flex';
+  dp.style.flexDirection = 'column';
+  dp.style.height = '100vh';
+  dp.style.overflow = 'hidden';
+  loadSession();
+  if (session.gcId) lockGcId(session.gcId);
+  if (session.area) document.getElementById('fArea').value = session.area;
+  updateProgress();
+}
+
+function goToView() {
+  var tp = document.getElementById('titlePage');
+  var dp = document.getElementById('dashPage');
+  var dv = document.getElementById('dataViewPage');
+  tp.style.display = 'none';
+  dp.style.display = 'none';
+  dv.style.removeProperty('display');
+  dv.style.display = 'flex';
+  dv.style.flexDirection = 'column';
+  dv.style.height = '100vh';
+  dv.style.overflow = 'hidden';
+  switchDvTab('daily');
+  loadDailyCount();
+}
+
 function showPage(id) {
-  ['titlePage','dashPage','dataViewPage'].forEach(p => {
-    const el = document.getElementById(p);
-    el.style.display = 'none';
-  });
-  const target = document.getElementById(id);
-  target.style.display = id === 'titlePage' ? 'flex' : 'flex';
-  target.style.flexDirection = 'column';
+  document.getElementById('titlePage').style.cssText    = 'display:none !important';
+  document.getElementById('dashPage').style.cssText     = 'display:none !important';
+  document.getElementById('dataViewPage').style.cssText = 'display:none !important';
+  var t = document.getElementById(id);
+  if (id === 'titlePage') {
+    t.style.cssText = 'display:flex !important; flex-direction:column; align-items:center; justify-content:center; height:100vh;';
+  } else {
+    t.style.cssText = 'display:flex !important; flex-direction:column; height:100vh; overflow:hidden;';
+  }
 }
 
 function goToTitle() {
   stopCamera();
-  showPage('titlePage');
+  var tp = document.getElementById('titlePage');
+  var dp = document.getElementById('dashPage');
+  var dv = document.getElementById('dataViewPage');
+  dp.style.display = 'none';
+  dv.style.display = 'none';
+  tp.style.display = 'flex';
+  tp.style.flexDirection = 'column';
+  tp.style.alignItems = 'center';
+  tp.style.justifyContent = 'center';
+  tp.style.height = '100vh';
 }
 
 // ════════════════════════════════════════════════
 //  DATA VIEW — ENTRY POINT
 // ════════════════════════════════════════════════
 function startDataView() {
-  showPage('dataViewPage');
-  switchDvTab('daily');
-  loadDailyCount();
+  goToView();
 }
 
 function switchDvTab(tab) {
