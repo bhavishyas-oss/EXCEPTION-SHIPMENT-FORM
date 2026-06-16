@@ -826,8 +826,8 @@
 // ══════════════════════════════════════════════
 //  CONFIG — REPLACE WITH YOUR DEPLOYED GAS URLs
 // ══════════════════════════════════════════════
-const GAS_AUTH_URL  = 'https://script.google.com/macros/s/AKfycbzOW3QKizvZFQe9yl0zBKQVpzQpMzaaT9rIUM3n7rURZndig5rzt3GQMm1g6M44gpWx/exec';   // credentials sheet script
-const GAS_DATA_URL  = 'https://script.google.com/macros/s/AKfycbwPV2ux3PBLWkoquh2qlCcj2pLYGWmME0gh3Ir6BQLHbfrvO4oEXj6tk_w7Np3vksC1Xg/exec';   // data sheet script
+const GAS_AUTH_URL  = 'https://script.google.com/macros/s/AKfycbx9wEb1pjBAj16lsnMP8_YhzS5vIctdWWPBl7bpZ2Cghc4Gl3rKUt70vKhzHSTqwivn/exec';   // credentials sheet script
+const GAS_DATA_URL  = 'https://script.google.com/macros/s/AKfycbyf4gUHhkQ7VvKZO9sIyhCsxkkaJAGABy1J6p98z_oGDLxT3nRMJkAF7kNC_F1Iuf-E9Q/exec';   // data sheet script
 
 // ══════════════════════════════════════════════
 //  SESSION
@@ -848,6 +848,37 @@ function loadSession() {
 function clearSession() { session = { userId:null, gcId:null, area:null, site:null }; sessionStorage.removeItem('sfSession'); }
 
 // ══════════════════════════════════════════════
+//  JSONP HELPER  (bypasses CORS for GET requests)
+// ══════════════════════════════════════════════
+function jsonpRequest(url, params) {
+  return new Promise((resolve, reject) => {
+    const cbName = 'sfcb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      reject(new Error('Request timed out. Check your network.'));
+    }, 15000);
+
+    window[cbName] = (data) => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      resolve(data);
+    };
+
+    const qs = new URLSearchParams({ ...params, callback: cbName }).toString();
+    const script = document.createElement('script');
+    script.src = `${url}?${qs}`;
+    script.onerror = () => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      reject(new Error('Script load failed. Check your GAS URL.'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// ══════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════
 window.addEventListener('load', () => {
@@ -865,7 +896,7 @@ window.addEventListener('load', () => {
 });
 
 // ══════════════════════════════════════════════
-//  LOGIN
+//  LOGIN  (uses JSONP — no CORS issues)
 // ══════════════════════════════════════════════
 async function doLogin() {
   const userId = document.getElementById('loginUserId').value.trim();
@@ -884,9 +915,11 @@ async function doLogin() {
   btn.disabled = true;
 
   try {
-    const params = new URLSearchParams({ action: 'authenticate', userId, password });
-    const resp = await fetch(`${GAS_AUTH_URL}?${params}`);
-    const data = await resp.json();
+    const data = await jsonpRequest(GAS_AUTH_URL, {
+      action: 'authenticate',
+      userId,
+      password,
+    });
 
     if (data.success) {
       session.userId = userId;
@@ -898,7 +931,7 @@ async function doLogin() {
       errEl.style.display = 'block';
     }
   } catch (e) {
-    errEl.textContent = 'Connection error. Check your network and try again.';
+    errEl.textContent = e.message || 'Connection error. Check your network and try again.';
     errEl.style.display = 'block';
   } finally {
     document.getElementById('loginBtnText').textContent = 'LOGIN';
@@ -1117,9 +1150,14 @@ async function submitRecord() {
 
   try {
     // Convert blob to base64
+    document.getElementById('uploadStatus').textContent = 'Preparing image…';
     const base64 = await blobToBase64(capturedBlob);
 
-    const payload = {
+    document.getElementById('uploadStatus').textContent = 'Uploading to Drive & saving record…';
+
+    // JSONP: GAS doGet receives all params including imageBase64
+    // Image is large so we chunk-encode via a hidden form POST to avoid URL length limits
+    const data = await jsonpRequest(GAS_DATA_URL, {
       action: 'submitRecord',
       gcId,
       area,
@@ -1129,25 +1167,18 @@ async function submitRecord() {
       userId: session.userId,
       imageBase64: base64,
       imageMime: 'image/jpeg',
-    };
-
-    document.getElementById('uploadStatus').textContent = 'Saving record…';
-    const resp = await fetch(GAS_DATA_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
     });
-    const data = await resp.json();
 
     if (data.success) {
       openModal('modalSuccess');
       document.getElementById('modalSuccessBody').textContent =
-        `Record saved for AWB ${awb}. Image stored at Drive. Ready for next entry.`;
+        `Record saved for AWB ${awb}. Image stored in Drive. Ready for next entry.`;
       clearAfterSubmit();
     } else {
       openErrorModal(data.message || 'Server returned an error. Please try again.');
     }
   } catch (e) {
-    openErrorModal('Network error during submission. Please check connection and retry.');
+    openErrorModal('Submission error: ' + (e.message || 'Please check connection and retry.'));
   } finally {
     isSubmitting = false;
     btn.disabled = false;
