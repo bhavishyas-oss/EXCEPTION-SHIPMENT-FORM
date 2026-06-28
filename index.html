@@ -109,15 +109,29 @@ input.invalid{border-color:var(--red)!important;}
 .dv-tab-panel.active{display:flex;}
 .dv-table-wrap{flex:1;overflow:auto;min-height:0;}
 
-/* TABLES */
-.dv-table{width:100%;border-collapse:collapse;font-size:12px;}
+/* TABLES — center-aligned, uniform, professional */
+.dv-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto;}
 .dv-table thead tr{position:sticky;top:0;background:var(--accent);z-index:2;}
-.dv-table thead th{font-family:var(--fdisp);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--bg-dark);padding:9px 10px;text-align:left;white-space:nowrap;border:1px solid rgba(0,0,0,0.1);}
+.dv-table thead th{
+  font-family:var(--fdisp);font-size:11px;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--bg-dark);
+  padding:10px 12px;
+  text-align:center;
+  vertical-align:middle;
+  white-space:nowrap;
+  border:1px solid rgba(0,0,0,0.12);
+}
 .dv-table tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
 .dv-table tbody tr:hover{background:rgba(255,255,255,0.04);}
-.dv-table tbody td{padding:7px 10px;color:var(--text);vertical-align:middle;}
+.dv-table tbody td{
+  padding:9px 12px;
+  color:var(--text);
+  vertical-align:middle;
+  text-align:center;
+  font-size:12px;
+}
 .dv-table tbody td.num{text-align:center;font-weight:700;color:var(--accent);}
-.dv-table tbody td.muted{color:var(--muted);font-size:11px;}
+.dv-table tbody td.muted{color:var(--muted);font-size:11px;text-align:center;}
 
 /* FILTERS */
 .dv-filters{display:flex;gap:8px;padding:10px 14px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
@@ -138,7 +152,7 @@ input.invalid{border-color:var(--red)!important;}
 .btn-page:disabled{opacity:0.35;cursor:not-allowed;}
 
 /* EXP STATUS radio in table */
-.exp-radio-group{display:flex;gap:4px;flex-wrap:nowrap;}
+.exp-radio-group{display:flex;gap:4px;flex-wrap:nowrap;justify-content:center;align-items:center;}
 .exp-radio-btn{font-family:var(--fdisp);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;border:1px solid var(--border);border-radius:4px;padding:3px 7px;cursor:pointer;background:var(--bg-input);color:var(--muted);transition:all 0.15s;white-space:nowrap;}
 .exp-radio-btn:hover{border-color:var(--accent);color:var(--accent);}
 .exp-radio-btn.sel-PENDING{background:#d97706;border-color:#d97706;color:#fff;}
@@ -153,15 +167,36 @@ input.invalid{border-color:var(--red)!important;}
 .btn-download-pdf:hover{background:var(--accent-h);}
 .btn-download-pdf svg{width:14px;height:14px;}
 
-/* Report table — Excel-like */
-.report-table{width:100%;border-collapse:collapse;font-size:11px;background:#fff;color:#000;}
-.report-table th,.report-table td{border:1px solid #333;padding:5px 8px;text-align:center;}
-.report-table .th-main{background:#1C856F;color:#fff;font-family:var(--fdisp);font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
-.report-table .th-sub{background:#e9df43;color:#0a4f40;font-family:var(--fdisp);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
-.report-table .th-date{background:#0a4f40;color:#fff;font-family:var(--fdisp);font-size:11px;font-weight:700;text-transform:uppercase;}
-.report-table .td-date{background:#f0fdf4;font-weight:700;color:#0a4f40;}
-.report-table .td-num{font-weight:600;}
-.report-table .td-num-0{color:#9ca3af;}
+/* Report table — Excel-like, fully center-aligned */
+.report-table{width:100%;border-collapse:collapse;font-size:11px;background:#fff;color:#000;table-layout:fixed;}
+.report-table th,.report-table td{
+  border:1px solid #333;
+  padding:7px 6px;
+  text-align:center;
+  vertical-align:middle;
+  word-break:break-word;
+}
+.report-table .th-main{
+  background:#1C856F;color:#fff;
+  font-family:var(--fdisp);font-size:12px;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;
+  text-align:center;vertical-align:middle;
+}
+.report-table .th-sub{
+  background:#e9df43;color:#0a4f40;
+  font-family:var(--fdisp);font-size:10px;font-weight:700;
+  letter-spacing:0.06em;text-transform:uppercase;
+  text-align:center;vertical-align:middle;
+}
+.report-table .th-date{
+  background:#0a4f40;color:#fff;
+  font-family:var(--fdisp);font-size:11px;font-weight:700;
+  text-transform:uppercase;
+  text-align:center;vertical-align:middle;
+}
+.report-table .td-date{background:#f0fdf4;font-weight:700;color:#0a4f40;text-align:center;}
+.report-table .td-num{font-weight:600;text-align:center;}
+.report-table .td-num-0{color:#9ca3af;text-align:center;}
 .report-table tbody tr:hover{background:#f9fafb;}
 
 /* MODALS */
@@ -903,8 +938,7 @@ function renderReportTable() {
 }
 
 // ════════════════════════════════════════════════
-//  PDF DOWNLOAD — fixed layout, proper margins,
-//  dynamic AWB totals, no blank page, fixed border
+//  PDF DOWNLOAD — clean single-page A4 landscape
 // ════════════════════════════════════════════════
 function downloadPDF() {
   if (!reportData.length) { alert('No report data to download. Please refresh first.'); return; }
@@ -912,181 +946,126 @@ function downloadPDF() {
   var pivot = buildReportPivot(reportData);
   var dates = Object.keys(pivot).sort(function(a,b){ return parseDMY(b) - parseDMY(a); });
 
-  // ── Calculate total AWB counts per shipment type ──────────────
+  // Dynamic totals per shipment type
   var totEMPTY = 0, totDAMAGED = 0, totORPHAN = 0;
   reportData.forEach(function(r) {
     var t = (r.shipType || '').toUpperCase();
-    if (t.indexOf('EMPTY')   > -1) totEMPTY++;
+    if      (t.indexOf('EMPTY')   > -1) totEMPTY++;
     else if (t.indexOf('DAMAGED') > -1) totDAMAGED++;
     else if (t.indexOf('ORPHAN')  > -1) totORPHAN++;
   });
 
-  // ── Timestamp ─────────────────────────────────────────────────
   var now    = new Date();
   var nowStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' })
              + ' ' + now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
 
-  // ── Build table body rows ─────────────────────────────────────
+  // Table body rows
   var rows = '';
   dates.forEach(function(date) {
     var d = pivot[date];
-    function c(v) {
-      return '<td style="text-align:center;padding:5px 4px;font-size:8pt;">' + (v === 0 ? '—' : v) + '</td>';
-    }
+    function c(v) { return '<td>' + (v === 0 ? '&mdash;' : v) + '</td>'; }
     rows += '<tr>'
-      + '<td style="text-align:center;font-weight:700;padding:5px 4px;font-size:8pt;background:#f0fdf4;color:#0a4f40;">' + date + '</td>'
+      + '<td class="td-date">' + date + '</td>'
       + c(d.EMPTY.PENDING)   + c(d.EMPTY.RECEIVED)   + c(d.EMPTY.SALVAGED)
       + c(d.DAMAGED.PENDING) + c(d.DAMAGED.RECEIVED) + c(d.DAMAGED.SALVAGED)
       + c(d.ORPHAN.PENDING)  + c(d.ORPHAN.RECEIVED)  + c(d.ORPHAN.SALVAGED)
       + '</tr>';
   });
 
-  // ── Full PDF HTML ─────────────────────────────────────────────
-  // Key fixes:
-  //   1. @page margin 20mm top/bottom, 15mm left/right
-  //   2. Border drawn via fixed-position box (avoids broken border from div approach)
-  //   3. thead { display:table-header-group } repeats header on every page
-  //   4. No min-height / no .page wrapper → eliminates blank second page
-  //   5. Dynamic totals in column headers
-  //   6. Counter-based page numbering via CSS @counter / printed footer
   var html = '<!DOCTYPE html>'
-    + '<html>'
-    + '<head>'
-    + '<meta charset="UTF-8"/>'
+    + '<html><head><meta charset="UTF-8"/>'
     + '<title>Exception Shipment Status Report</title>'
     + '<style>'
 
-    // Page setup
+    // Page: A4 landscape, margins that leave room for the border inset
     + '@page {'
     +   'size: A4 landscape;'
-    +   'margin: 20mm 15mm 20mm 15mm;'
+    +   'margin: 18mm 14mm 18mm 14mm;'
     + '}'
 
-    // Body — no padding/margin so page margin handles spacing
-    + 'html, body {'
-    +   'margin: 0; padding: 0;'
-    +   'font-family: Arial, Helvetica, sans-serif;'
-    +   'font-size: 9pt;'
-    +   'color: #111;'
-    +   '-webkit-print-color-adjust: exact;'
-    +   'print-color-adjust: exact;'
+    + 'html,body{'
+    +   'margin:0;padding:0;'
+    +   'font-family:Arial,Helvetica,sans-serif;'
+    +   'font-size:9pt;color:#111;'
+    +   '-webkit-print-color-adjust:exact;print-color-adjust:exact;'
+    +   'height:auto;min-height:unset;'
     + '}'
 
-    // No extra height that would push a blank page
-    + 'body { min-height: unset !important; height: auto !important; }'
-
-    // Page border — using a fixed overlay so it appears on every printed page
-    + '@media print {'
-    +   '@page { border: none; }'   // reset any inherited border
+    // Outer wrapper — gives us the border without affecting page flow
+    + '.report-wrap{'
+    +   'border:2pt solid #000;'
+    +   'padding:12pt 14pt 10pt 14pt;'
+    +   'box-sizing:border-box;'
     + '}'
 
-    // Drawn border via a positioned element
-    + '.page-border {'
-    +   'position: fixed;'
-    +   'top: 4mm; left: 4mm; right: 4mm; bottom: 4mm;'
-    +   'border: 2px solid #000;'
-    +   'pointer-events: none;'
-    +   'z-index: 9999;'
+    // Header
+    + '.rh{text-align:center;margin-bottom:8pt;}'
+    + '.rh h1{font-size:17pt;font-weight:900;margin:0 0 3pt;letter-spacing:0.04em;}'
+    + '.rh h2{font-size:11pt;font-weight:700;margin:0 0 2pt;}'
+    + '.rh h3{font-size:9.5pt;font-weight:700;margin:0 0 7pt;}'
+    + '.rh .meta{font-size:8pt;color:#444;line-height:1.8;}'
+
+    // Divider
+    + '.divider{border:none;border-top:1pt solid #bbb;margin:6pt 0;}'
+
+    // Table — fixed layout so it never overflows
+    + 'table{'
+    +   'width:100%;border-collapse:collapse;'
+    +   'table-layout:fixed;font-size:7.8pt;'
+    + '}'
+    + 'thead{display:table-header-group;}'  // header repeats on overflow pages
+
+    // Column widths: date 13%, nine data cols share 87% = 9.67% each
+    + 'col.cd{width:13%;}'
+    + 'col.cn{width:9.67%;}'
+
+    + 'th,td{'
+    +   'border:1pt solid #444;'
+    +   'padding:4pt 3pt;'
+    +   'text-align:center;'
+    +   'vertical-align:middle;'
+    +   'word-wrap:break-word;overflow-wrap:break-word;'
     + '}'
 
-    // HEADER
-    + '.report-header { text-align: center; margin-bottom: 10px; }'
-    + '.report-header h1 { font-size: 18pt; font-weight: 900; margin: 0 0 3px; letter-spacing: 0.05em; }'
-    + '.report-header h2 { font-size: 12pt; font-weight: 700; margin: 0 0 2px; }'
-    + '.report-header h3 { font-size: 10pt; font-weight: 700; margin: 0 0 8px; }'
-    + '.report-meta { font-size: 8.5pt; color: #444; margin-bottom: 10px; text-align: center; line-height: 1.7; }'
+    + '.th-main{background:#1C856F;color:#fff;font-weight:bold;font-size:8pt;}'
+    + '.th-sub{background:#e9df43;color:#0a4f40;font-weight:bold;font-size:7pt;}'
+    + '.th-date{background:#0a4f40;color:#fff;font-weight:bold;font-size:7.5pt;vertical-align:middle;}'
+    + '.td-date{background:#edf7f0;font-weight:700;color:#0a4f40;}'
+    + 'tbody tr:nth-child(even) td{background:#f8fffe;}'
 
-    // TABLE
-    + 'table {'
-    +   'width: 100%;'
-    +   'border-collapse: collapse;'
-    +   'table-layout: fixed;'
+    // Footer
+    + '.footer{'
+    +   'text-align:center;font-size:7pt;color:#666;'
+    +   'border-top:1pt solid #ccc;margin-top:8pt;padding-top:5pt;'
     + '}'
-    + 'thead { display: table-header-group; }'  // repeat header on each page
-    + 'tbody { display: table-row-group; }'
-    + 'th, td {'
-    +   'border: 1.2px solid #333;'
-    +   'padding: 5px 4px;'
-    +   'text-align: center;'
-    +   'word-break: break-word;'
-    +   'overflow: hidden;'
-    + '}'
-    // Column widths: DATE col wider, 9 data cols equal
-    + 'col.c-date { width: 11%; }'
-    + 'col.c-data { width: 9.89%; }'
 
-    + '.th-main {'
-    +   'background: #1C856F !important;'
-    +   'color: #fff !important;'
-    +   'font-weight: bold;'
-    +   'font-size: 8.5pt;'
-    +   'padding: 6px 4px;'
-    + '}'
-    + '.th-sub {'
-    +   'background: #e9df43 !important;'
-    +   'color: #0a4f40 !important;'
-    +   'font-weight: bold;'
-    +   'font-size: 7.5pt;'
-    + '}'
-    + '.th-date {'
-    +   'background: #0a4f40 !important;'
-    +   'color: #fff !important;'
-    +   'font-weight: bold;'
-    +   'font-size: 8pt;'
-    +   'vertical-align: middle;'
-    + '}'
-    + 'tbody tr:nth-child(even) td { background: #f9fff9; }'
-    + 'tbody tr:nth-child(odd)  td { background: #ffffff; }'
+    // No blank page: suppress everything after body content
+    + 'body > *:last-child{page-break-after:avoid;}'
 
-    // FOOTER — fixed at bottom of each printed page
-    + '.footer {'
-    +   'position: fixed;'
-    +   'bottom: 6mm;'
-    +   'left: 0; right: 0;'
-    +   'text-align: center;'
-    +   'font-size: 7pt;'
-    +   'color: #555;'
-    +   'border-top: 1px solid #ccc;'
-    +   'padding-top: 3mm;'
-    + '}'
-    + '.footer .page-num::before { content: "Page "; }'
-    + '.footer .page-num { counter-increment: page; }'
+    + '</style></head><body>'
 
-    // Page counter
-    + '@page { counter-increment: page; }'
+    + '<div class="report-wrap">'
 
-    // Prevent orphan rows
-    + 'tr { page-break-inside: avoid; }'
-
-    + '</style>'
-    + '</head>'
-    + '<body>'
-
-    // Fixed border — appears on every printed page because it's position:fixed
-    + '<div class="page-border"></div>'
-
-    // Fixed footer
-    + '<div class="footer">'
-    +   'Operations DEO Shipment Recorder &nbsp;|&nbsp; Generated Automatically from Dashboard'
-    + '</div>'
-
-    // Report content
-    + '<div class="report-header">'
+    // Header block
+    + '<div class="rh">'
     +   '<h1>SHADOWFAX</h1>'
     +   '<h2>Operations DEO Shipment Recorder</h2>'
     +   '<h3>Exception Shipment Status Report</h3>'
-    + '</div>'
-    + '<div class="report-meta">'
-    +   '<strong>Report Generated On:</strong> ' + nowStr
-    +   '&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Site:</strong> ONE NCR'
+    +   '<div class="meta">'
+    +     '<strong>Report Generated On:</strong> ' + nowStr
+    +     '&nbsp;&nbsp;&bull;&nbsp;&nbsp;<strong>Site:</strong> ONE NCR'
+    +   '</div>'
     + '</div>'
 
+    + '<hr class="divider"/>'
+
+    // Report table
     + '<table>'
     + '<colgroup>'
-    +   '<col class="c-date"/>'
-    +   '<col class="c-data"/><col class="c-data"/><col class="c-data"/>'
-    +   '<col class="c-data"/><col class="c-data"/><col class="c-data"/>'
-    +   '<col class="c-data"/><col class="c-data"/><col class="c-data"/>'
+    +   '<col class="cd"/>'
+    +   '<col class="cn"/><col class="cn"/><col class="cn"/>'
+    +   '<col class="cn"/><col class="cn"/><col class="cn"/>'
+    +   '<col class="cn"/><col class="cn"/><col class="cn"/>'
     + '</colgroup>'
     + '<thead>'
     + '<tr>'
@@ -1104,10 +1083,15 @@ function downloadPDF() {
     + '<tbody>' + rows + '</tbody>'
     + '</table>'
 
+    + '<div class="footer">'
+    +   'Operations DEO Shipment Recorder &nbsp;|&nbsp; Generated Automatically from Dashboard'
+    + '</div>'
+
+    + '</div>'  // end .report-wrap
+
+    // Print immediately after render
     + '<script>'
-    +   'window.onload = function() {'
-    +     'setTimeout(function() { window.print(); }, 400);'
-    +   '};'
+    +   'window.onload=function(){setTimeout(function(){window.print();},350);};'
     + '<\/script>'
     + '</body></html>';
 
